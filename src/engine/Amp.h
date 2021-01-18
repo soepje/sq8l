@@ -1,30 +1,27 @@
 #pragma once
 
+// Size: 0x14
 struct Saturation {
-    int /* field_18 */ level;
-    float /* field_1c */ threshold;
-    float /* field_20 */ parameterA;
-    float /* field_24 */ parameterB;
-    float /* field_28 */ gain;
+    int /* field_0 */ level;
+    float /* field_4 */ threshold;
+    float /* field_8 */ parameterA;
+    float /* field_c */ parameterB;
+    float /* field_10 */ gain;
 };
 
-// Camp
+// Name: Camp
+// Size: 0x74
 class Amp {
+private:
     float /* field_4 */ mVolume[2];
     float /* field_c */ mVolumeIncrement[2];
-
-public:
     int /* field_14 */ mSmoothingCounter;
-private:
-
     Saturation /* field_18 */ mSaturation;
-
-    float /* field_2c */ mFIELD_2c;
-    float /* field_30 */ mFIELD_30;
-    float /* field_34 */ mFIELD_34;
-    float /* field_38 */ mFIELD_38;
-    float /* field_3c */ mFIELD_3c;
-
+    float /* field_2c */ mField_2c;
+    float /* field_30 */ mField_30;
+    float /* field_34 */ mField_34;
+    float /* field_38 */ mField_38;
+    float /* field_3c */ mField_3c;
     float /* field_40 */ mTargetVolume[2];
     int /* field_48 */ mSmoothingSamples;
     float /* field_4c */ mSmoothingSamplesInverse;
@@ -41,9 +38,9 @@ private:
 public:
     Amp();
     void init();
-    void /* FUN_0045e554 */ copyState(Amp *other);
-    void /* fun_45e680 */ setParameters(unsigned int volume, int panning, bool reset);
-    void /* fun_45e69c */ setParameters(unsigned int volume, int panning, bool reset, float gain);
+    void copyState(Amp *other);
+    void setParameters(unsigned int volume, int panning, bool reset);
+    void setParameters(unsigned int volume, int panning, bool reset, float gain);
     void updateSmoothing();
     void setParameterValues(unsigned int volumeIndex, int panningIndex, bool reset);
     void setSampleRate(float sampleRate);
@@ -51,6 +48,7 @@ public:
     void setSmoothing(float seconds);
     void setVolumeResponse(int responseIndex);
     void setSaturation(int saturationIndex);
-    void process(float outputs[2], float sample);
-    void process(float *channels, float sample, float outputGain);
+    void process(float *channels, float sample);
+    void process(float *channels, float sample, float gain);
+    int smoothingCounter() { return mSmoothingCounter; }
 };

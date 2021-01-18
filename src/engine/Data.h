@@ -9,7 +9,6 @@ extern char /* 0x4c1688 */ envShapingCurves[8][256];
 extern unsigned char /* 0x494dcc */ envExponentialVelocityCurve[128];
 extern unsigned char /* 0x494d4c */ envLinearVelocityCurve[128];
 extern unsigned short /* 0x4c2090 */ envEnvelopeTimes[64];
-extern float /* 0x4c5808 */ ampVolumeCurve[256];
 
 // TODO figure out offsets in binary
 
@@ -22,4 +21,3 @@ extern float /* 0x4c5808 */ ampVolumeCurve[256];
 // 0x494dcc envExponentialVelocityCurve
 // 0x494d4c envLinearVelocityCurve
 // 0x4c2090 envEnvelopeTimes
-// 0x4c5808 ampVolumeCurve
