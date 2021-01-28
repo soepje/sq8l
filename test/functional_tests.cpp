@@ -77,6 +77,50 @@ TEST_CASE( "The lick 1", "[lick1]" ) {
 
 }
 
+TEST_CASE("Envelope saw", "[envsaw1]") {
+    Synth synth{44100};
+    Synth_settings settings = { 0 };
+
+    settings.mono = 1;
+    settings.voiceStealingMode = 0;
+
+    settings.oscSettings[0].wave = 0;
+    settings.oscSettings[0].enabled = 1;
+    settings.oscSettings[0].level = 63;
+    settings.oscSettings[0].octave = 0;
+
+    settings.ampSettings.stereoPanning = 60;
+    settings.ampSettings.saturation = 14;
+    settings.ampSettings.envelopeAmplitudeModulationAmount = 50;
+
+    settings.envSettings[3].levels[0] = 0;
+    settings.envSettings[3].levels[1] = 60;
+    settings.envSettings[3].levels[2] = 40;
+    settings.envSettings[3].levels[3] = 40;
+    settings.envSettings[3].levels[4] = 0;
+
+    settings.envSettings[3].times[0] = 20;
+    settings.envSettings[3].times[1] = 18;
+    settings.envSettings[3].times[2] = 21;
+    settings.envSettings[3].times[3] = 30;
+
+    synth.mSettings = &settings;
+
+    float samples[44100 * 4] = { 0.0 };
+
+    synth.triggerNote(0, 40, 100);
+
+    for (int i = 0; i < 44100 * 2; i++) {
+        synth.getSamples(false, &samples[i*2], 1, &samples[i*2+1]);
+
+        if (i == 20000) {
+            synth.triggerNote(0, 40, 0);
+        }
+    }
+
+    playSamples(samples, 44100 * 2, 2);
+}
+
 TEST_CASE("Synth bass lick", "[lick2]") {
     Synth synth{44100};
     Synth_settings settings = { 0 };

@@ -789,10 +789,10 @@ void /* FUN_00463388 */ Synth::triggerNote(unsigned char param_2, unsigned char 
     if (mGlobalVoiceStealingMode < 1) {
         voiceStealingMode = mSettings->voiceStealingMode; // = mEditBuf.mField_a94.mField_195
     } else {
-        voiceStealingMode = mGlobalVoiceStealingMode - 2;
+        voiceStealingMode = mGlobalVoiceStealingMode - 1;
     }
 
-    triggerOptions.voiceStealSoft = voiceStealingMode != -1;
+    triggerOptions.voiceStealSoft = voiceStealingMode != 0;
 
     int voiceGroup = 0; // = mEditBuf->FUN_0046093c();
 
@@ -827,8 +827,7 @@ void /* FUN_00463420 */ Synth::triggerNote(unsigned char note, unsigned char vel
             for (int i = 0; i < mField_f4c; i++) {
                 SynthVoice* voice = getVoice(i);
 
-                // i think this null ptr check is wrong
-                if (voice != nullptr && voice->group == voiceGroup) {
+                if (voice->playing != 0 && voice->group == voiceGroup) {
                     bVar7 = voice->field_18 != 0;
                     bVar8 = voice->field_1c != 0;
                     voiceIndex = i;
@@ -1283,11 +1282,6 @@ bool /* FUN_00464410 */ Synth::getVoiceOutput(SynthVoice* voice, float output[2]
     float sample = mDoc->getSample(voice->voiceIndex);
     float filteredSample = voice->filters[0]->process(sample);
 
-    output[0] = sample;
-    output[1] = sample;
-
-    return false;
-
     if (voice->field_30 == 0) {
         voice->amp->process(output, filteredSample);
     } else {
@@ -1385,9 +1379,6 @@ void /* FUN_004645c8 */ Synth::getSamples(bool reset, float *param_3, int numSam
                 if (mMuffle) {
                     muffle(outputs);
                 }
-
-// TODO Fix
-                mField_f64 = 1000000;
 
                 if (!reset) {
                     param_3[i] += outputs[0] * mField_f64;
