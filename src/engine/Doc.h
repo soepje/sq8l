@@ -90,6 +90,7 @@ struct VoiceSettings {
 //Cdoc
 // Size: 0x28a0
 class Doc {
+private:
     unsigned int /* field_4 */ mNumVoices;
     Voice /* field_8 */ voices[16];
 
@@ -129,14 +130,12 @@ class Doc {
     float /* field_2090 */ mClockRate;
     float /* field_2094 */ mSampleRate;
     float /* field_2098 */ mSampleDuration;
-
-public:
-    unsigned int /* field_209c */ field_209c;
-private:
-
+    unsigned int /* field_209c */ mField_209c;
     VoiceSettings /* field_20a0 */ mVoiceSettings[16];
 
 public:
+    explicit /* fun_45b9e0 */ Doc(unsigned int numVoices);
+    /* FUN_0045ba78 */ ~Doc();
     void /* fun_45baac */ init();
     void /* fun_45bb54 */ initVoice(unsigned int voiceIndex);
     void /* fun_45bc00 */ initVoices();
@@ -161,12 +160,8 @@ public:
     void /* fun_45c7bc */ resetVoiceOutput(Voice *voice);
     VoiceSettings * /* fun_45c7e0 */ getVoiceSettings(unsigned int voiceIndex);
     float /* fun_45c7f4 */ getSample(unsigned int voiceIndex);
-
-public:
-    explicit /* fun_45b9e0 */ Doc(unsigned int numVoices);
-    /* FUN_0045ba78 */ ~Doc();
-
     void FUN_0045c4f8(int note, unsigned int wave, unsigned int *param_4, char **param_5);
+    unsigned int field_209c() { return mField_209c; }
 };
 
 void /* FUN_0045c470 */ fun_45c470(int* semi, unsigned int* wsr);

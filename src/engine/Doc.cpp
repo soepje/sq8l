@@ -137,7 +137,7 @@ void /* FUN_0045bc4c */ Doc::setSampleRate(float sampleRate) {
     mSampleRate = sampleRate;
     mSampleDuration = 1.0f / mSampleRate;
     field_2068 = floor((mClockRate / mSampleRate) * (2 << 29)); // TODO check floor
-    field_209c = round(mSampleRate * 0.0975); // TODO check round
+    mField_209c = round(mSampleRate * 0.0975); // TODO check round
 
     updateSampleRate();
 }
