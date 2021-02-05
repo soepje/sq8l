@@ -30,11 +30,7 @@ private:
     int /* field_54 */ mInverseBias;
     int /* field_58 */ mShapingCurveIndex;
     char* /* field_5c */ mShapingCurve;
-
-public:
     bool /* field_60 */ mRunning;
-
-private:
     bool /* field_61 */ field_61;
     bool /* field_62 */ field_62;
     bool /* field_63 */ field_63;
@@ -52,6 +48,7 @@ public:
     void /* FUN_0045dfb4 */ triggerRelease(bool sustain);
     int /* FUN_0045e1d4 */ getOutput();
     int /* FUN_0045e210 */ getOutputAndStep(bool sustain);
+    bool isRunning() { return mRunning; }
 
 private:
     void /* FUN_0045dc3c */ init();
