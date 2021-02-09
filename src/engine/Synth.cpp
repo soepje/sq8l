@@ -236,19 +236,17 @@ void /* FUN_004624a8 */ Synth::FUN_004624a8(short* param_2, unsigned char note, 
 
 void /* FUN_004624f4 */ Synth::FUN_004624f4(short* param_2, unsigned char note) {
     if (param_2 != nullptr && note < 0x80) {
-        int iVar2;
+        int noteIndex = -1;
         for (int i = 0; i < 4; i++) {
-            iVar2 = i;
-            if (note == param_2[4 + i]) break;
-            iVar2 = -1;
+            if (param_2[4 + i] == note) {
+                noteIndex = i;
+                break;
+            }
         }
 
-        if (iVar2 > -1) {
-            if (iVar2 < 3) {
-                while (iVar2 != 3) {
-                    param_2[4 + iVar2] = param_2[5 + iVar2];
-                    iVar2++;
-                }
+        if (noteIndex > -1 && noteIndex < 3) {
+            for (int i = noteIndex; i < 3; i++) {
+                param_2[4 + i] = param_2[5 + i];
             }
 
             param_2[7] = -1;
@@ -278,7 +276,7 @@ void /* FUN_00462570 */ Synth::initVoices() {
 
         mNumUsedVoices = 0;
 
-        mVoiceAssignments[i].playing = 0;
+        mVoiceAssignments[i].voice = nullptr;
         mVoiceAssignments[i].voiceIndex = -1;
 
         mVoiceMapping[i] = i;
@@ -628,7 +626,7 @@ void /* FUN_00462f64 */ Synth::reserveVoice(int voiceIndex) {
     if (mNumUsedVoices < mNumVoices) {
         VoiceAssignment* unknown1 = &mVoiceAssignments[mNumUsedVoices];
 
-        unknown1->playing = mVoices[voiceIndex].playing;
+        unknown1->voice = &mVoices[voiceIndex];
         unknown1->voiceIndex = voiceIndex;
 
         mNumUsedVoices += 1;
@@ -651,13 +649,13 @@ void /* FUN_00462f90 */ Synth::freeVoice(int voiceIndex) {
 
         if (iVar2 < mNumVoices - 1 && iVar2 < 15) {
             while (iVar2 != 15) {
-                mVoiceAssignments[iVar2].playing = mVoiceAssignments[iVar2 + 1].playing;
+                mVoiceAssignments[iVar2].voice = mVoiceAssignments[iVar2 + 1].voice;
                 mVoiceAssignments[iVar2].voiceIndex = mVoiceAssignments[iVar2 + 1].voiceIndex;
                 iVar2++;
             }
         }
 
-        mVoiceAssignments[15].playing = 0;
+        mVoiceAssignments[15].voice = nullptr;
         mVoiceAssignments[15].voiceIndex = -1;
     }
 }
@@ -1350,10 +1348,10 @@ void /* FUN_004645c8 */ Synth::getSamples(bool reset, float *param_3, int numSam
 //    }
 
     if (mField_f88 == 0 /* && mField_f8c < 1 */ && mNumVoices > 0) {
-        int var60[16];
+        int finishedVoices[16];
 
         for (int i = 0; i < 16; i++) {
-            var60[i] = -1;
+            finishedVoices[i] = -1;
         }
 
         for (int i = 0; i < numSamples; i++) {
@@ -1361,20 +1359,20 @@ void /* FUN_004645c8 */ Synth::getSamples(bool reset, float *param_3, int numSam
 
             if (mNumUsedVoices > 0) {
                 float outputs[2] = {0.0, 0.0};
-                int local_14 = 0;
+                int numFinishedVoices = 0;
 
                 for (int j = 0; j < mNumUsedVoices; j++) {
-                    bool voiceOutput = getVoiceOutput(&mVoices[j], outputs);
+                    bool voiceFinished = getVoiceOutput(mVoiceAssignments[j].voice, outputs);
 
-                    if (voiceOutput) {
-                        var60[local_14] = mVoices[j].playing; // ???
-                        local_14++;
+                    if (voiceFinished) {
+                        finishedVoices[numFinishedVoices] = mVoiceAssignments[j].voiceIndex;
+                        numFinishedVoices++;
                     }
                 }
 
-                for (int j = 0; j < local_14; j++) {
-                    stopVoice(var60[j]);
-                    var60[j] = -1;
+                for (int j = 0; j < numFinishedVoices; j++) {
+                    stopVoice(finishedVoices[j]);
+                    finishedVoices[j] = -1;
                 }
 
                 if (mMuffle) {

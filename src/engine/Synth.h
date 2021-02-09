@@ -160,7 +160,7 @@ struct SynthVoice {
 };
 
 struct VoiceAssignment {
-    int /* 0x0 */ playing;
+    SynthVoice* /* 0x0 */ voice;
     int /* 0x4 */ voiceIndex;
 };
 
