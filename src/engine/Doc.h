@@ -134,37 +134,37 @@ private:
     VoiceSettings /* field_20a0 */ mVoiceSettings[16];
 
 public:
-    explicit /* fun_45b9e0 */ Doc(unsigned int numVoices);
-    /* FUN_0045ba78 */ ~Doc();
-    void /* fun_45baac */ init();
-    void /* fun_45bb54 */ initVoice(unsigned int voiceIndex);
-    void /* fun_45bc00 */ initVoices();
-    void /* fun_45bc18 */ initVoices2();
-    void /* fun_45bc20 */ setNumVoices(unsigned int numVoices);
-    void /* fun_45bc34 */ setClockRate(float clockRate);
+    explicit Doc(unsigned int numVoices);
+    ~Doc();
+    void init();
+    void initVoice(unsigned int voiceIndex);
+    void initVoices();
+    void initVoices2();
+    void setNumVoices(unsigned int numVoices);
+    void setClockRate(float clockRate);
 
 
-    void /* fun_45bc4c */ setSampleRate(float sampleRate);
-    void /* fun_45bcd0 */ triggerVoice(unsigned voiceIndex, unsigned int note, int prevVoiceIndex, bool param_5,
+    void setSampleRate(float sampleRate);
+    void triggerVoice(unsigned voiceIndex, unsigned int note, int prevVoiceIndex, bool param_5,
                                        bool restartOsc);
-    void /* fun_45bd44 */ setGlideStart(unsigned int voiceIndex, unsigned int note, bool trigger);
-    void /* fun_45bd78 */ stopVoice(unsigned int voiceIndex);
-    void /* fun_45bda4 */ updateVoiceSettings(unsigned int voiceIndex);
-    void /* fun_45c378 */ updateSmoothingMode(unsigned int voiceIndex);
-    void /* fun_45c460 */ setGlideStart(unsigned int voiceIndex, unsigned int note);
+    void setGlideStart(unsigned int voiceIndex, unsigned int note, bool trigger);
+    void stopVoice(unsigned int voiceIndex);
+    void updateVoiceSettings(unsigned int voiceIndex);
+    void updateSmoothingMode(unsigned int voiceIndex);
+    void setGlideStart(unsigned int voiceIndex, unsigned int note);
 
-    float /* fun_45c568 */ getVolume(unsigned int volumeIndex);
-    void /* fun_45c5ec */ fun_45c5ec(Voice *voice, unsigned int oscIndex, float param_4);
-    void /* fun_45c628 */ updateClockRate();
-    void /* fun_45c6dc */ updateSampleRate();
-    void /* fun_45c7bc */ resetVoiceOutput(Voice *voice);
-    VoiceSettings * /* fun_45c7e0 */ getVoiceSettings(unsigned int voiceIndex);
-    float /* fun_45c7f4 */ getSample(unsigned int voiceIndex);
+    float getVolume(unsigned int volumeIndex);
+    void fun_45c5ec(Voice *voice, unsigned int oscIndex, float param_4);
+    void updateClockRate();
+    void updateSampleRate();
+    void resetVoiceOutput(Voice *voice);
+    VoiceSettings * getVoiceSettings(unsigned int voiceIndex);
+    float getSample(unsigned int voiceIndex);
     void FUN_0045c4f8(int note, unsigned int wave, unsigned int *param_4, char **param_5);
     unsigned int field_209c() { return mField_209c; }
 };
 
-void /* FUN_0045c470 */ fun_45c470(int* semi, unsigned int* wsr);
-void /* fun_45c49c */ fun_45c49c(unsigned int note, unsigned int glide_note, int* param_4, unsigned int* wsr, unsigned int* page, unsigned int wave, int fine, int semi);
-unsigned int /* fun_45c55c */ fun_45c55c(int param_2);
-unsigned int /* FUN_0045b8b4 */ getVolume2(int pitchIndex);
+void fun_45c470(int* semi, unsigned int* wsr);
+void fun_45c49c(unsigned int note, unsigned int glide_note, int* param_4, unsigned int* wsr, unsigned int* page, unsigned int wave, int fine, int semi);
+unsigned int fun_45c55c(int param_2);
+unsigned int getVolume2(int pitchIndex);
