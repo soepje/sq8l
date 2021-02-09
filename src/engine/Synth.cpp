@@ -816,6 +816,8 @@ void /* FUN_00463420 */ Synth::triggerNote(unsigned char note, unsigned char vel
                 }
             }
         }
+
+        FUN_004624f4(local_1c, note);
     } else {
         FUN_004624f4(local_1c, note);
 
