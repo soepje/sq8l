@@ -678,7 +678,7 @@ int /* FUN_0046300c */ Synth::selectVoice() {
         for (int i = 0; i < mField_f4c; i++) {
             SynthVoice* voice = getVoice(i);
 
-            if (voice->playing || voice->field_4 == 0) {
+            if (voice->playing == 0 || voice->field_4 == 0) {
                 voiceIndex = i;
                 break;
             }
