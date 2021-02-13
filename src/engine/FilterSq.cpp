@@ -2,9 +2,9 @@
 
 #include "FilterSq.h"
 
-float table1[32];
+float table1[256];
 float table2[32];
-float table3[256];
+float table3[32];
 
 void initFilterSQTable1();
 void initFilterSQTable2();
@@ -155,11 +155,11 @@ void /* FUN_0045f3d4 */ FilterSq::initTable4() {
     auto /* FUN_0045f29c */ FUN_0045f29c = [&](float x) {
         float a = x / mSampleRate;
 
-        if (0.490 < a) {
+        if (a > 0.490) {
             a = 0.490;
         }
 
-        return (float) (a * (4.0 + M_PI));
+        return (float) (a * 2 * M_PI);
     };
 
     auto /* FUN_0045f2f */ FUN_0045f2f = [](float x) {
@@ -171,18 +171,18 @@ void /* FUN_0045f3d4 */ FilterSq::initTable4() {
     };
 
     auto /* FUN_0045f358 */ FUN_0045f358 = [](float x, float y) {
-        float a = exp(-0.90194209275175 * x) * 1.78879830303240001;
-        float b = exp(3.777826974574 * x) * -0.015449152554;
+        float a = exp(-0.8038841855035 * x) * 1.5775966060648;
+        float b = exp(3.555653949148 * x) * -0.015273305108;
 
         return (a + b) * y;
     };
 
     for (int j = 0; j < 256; j++) {
-        float a = FUN_0045f2f(FUN_0045f29c(table3[j]));
+        float a = FUN_0045f2f(FUN_0045f29c(table1[j]));
 
         for (int i = 0; i < 32; i++) {
             mTable4[i * 512 + j * 2] = a;
-            mTable4[i * 512 + j * 2 + 1] = FUN_0045f358(a, table1[i]);
+            mTable4[i * 512 + j * 2 + 1] = FUN_0045f358(a, table2[i]);
         }
     }
 }
@@ -199,7 +199,7 @@ void /* FUN_0045f4dc */ FilterSq::calculateFeedbackAmount(bool reset) {
 
     field_0x64 *= field_0x4c;
     field_0x60 *= field_0x5c;
-    field_0x68 = table2[mResonance];
+    field_0x68 = table3[mResonance];
 
     if (reset) {
         field_0x18 = field_0x68;
@@ -238,40 +238,43 @@ float /* FUN_0045f578 */ FilterSq::process(float sample) {
     return mBuf4;
 }
 
-void /* FUN_0045f61c */ initFilterSQTable3() {
+void /* FUN_0045f61c */ initFilterSQTable1() {
     float a = -logf(42.394f / 309.662f) / 63.0f;
-    for (int i = 0; i < 64; i++) {
-        table3[i] = expf((float) i * a) * 42.394f * 0.9925f;
+    for (int i = 0; i < 65; i++) {
+        table1[i] = expf((float) i * a) * 42.394f * 0.985f;
     }
 
-    float b = -logf(309.662f / 2231.04f) / 63.0f;
-    for (int i = 0; i < 64; i++) {
-        table3[i + 64] = expf((float) i * b) * 309.662f * 0.9925f;
+    float bb = table1[64];
+    float b = -logf(bb / 2231.04f) / 63.0f;
+    for (int i = 0; i < 65; i++) {
+        table1[i + 64] = expf((float) i * b) * bb * 0.985f;
     }
 
-    float c = -logf(2231.04f / 13638.1f) / 63.0f;
-    for (int i = 0; i < 64; i++) {
-        table3[i + 128] = expf((float) i * c) * 2231.04f * 0.9925f;
+    float cc = table1[128];
+    float c = -logf(cc / 13638.1f) / 63.0f;
+    for (int i = 0; i < 65; i++) {
+        table1[i + 128] = expf((float) i * c) * cc * 0.985f;
     }
 
-    float d = -logf(13638.1f / 45767.9f) / 63.0f;
+    float dd = table1[192];
+    float d = -logf(dd / 45767.9f) / 63.0f;
     for (int i = 0; i < 64; i++) {
-        table3[i + 192] = expf((float) i * d) * 13638.1f * 0.9925f;
+        table1[i + 192] = expf((float) i * d) * dd * 0.985f;
     }
 }
 
-void /* FUN_0045f79c */ initFilterSQTable1() {
-    table1[0] = 0;
+void /* FUN_0045f79c */ initFilterSQTable2() {
+    table2[0] = 0;
 
     for (int i = 1; i < 32; i++) {
         double x = i / 31.0;
 
-        table1[i] = -0.572034995441400018201 * x * x + 1.641754288 * x - 0.0466502765;
+        table2[i] = (-0.5720349954414 * x * x + 1.615899885505 * x - 0.04591561944125) * 1.016;
     }
 }
 
-void /* FUN_0045f830 */ initFilterSQTable2() {
+void /* FUN_0045f830 */ initFilterSQTable3() {
     for (int i = 0; i < 32; i++) {
-        table2[i] = exp(sqrt(i / 31.0) * log(0.330)); // log(0.415)
+        table3[i] = exp(sqrt(i / 31.0) * log(0.330));
     }
 }
