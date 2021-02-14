@@ -420,7 +420,7 @@ void SqLfo::updateSettings() {
             FIELD_2c = 0;
         } else if (wave < 0x4b) {
 
-            if (mSettings.FIELD_a8 != nullptr) {
+            if (mSettings.loadWave != nullptr) {
                 int wave = mSettings.wave - 5;
 
                 int iVar1; // TODO

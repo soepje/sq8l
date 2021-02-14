@@ -60,9 +60,7 @@ float /* DAT_004c2530 */ smoothingDurations[2][4] = {
 
         for (int j = 0; j < 4; j++) {
             mVoices[i].lfos[j] = new SqLfo{83.59257507};
-
-//            mVoices[i].lfos[j]->mSettings.FIELD_a8 = &Doc::FUN_0045c4f8; TODO
-            mVoices[i].lfos[j]->mSettings.FIELD_ac = mDoc;
+            mVoices[i].lfos[j]->mSettings.loadWave = [this] (auto ...args) { mDoc->getWaveData(args...); };
         }
 
         for (int j = 0; j < 4; j++) {
@@ -75,9 +73,6 @@ float /* DAT_004c2530 */ smoothingDurations[2][4] = {
 
         mVoices[i].amp = new Amp;
     }
-
-    // TODO
-//    (mDoc->*(mVoices[0].lfos[0]->mSettings.FIELD_a8))(0, 0, 0, 0);
 
     setNumVoices(8, 8);
     setSampleRate(sampleRate);

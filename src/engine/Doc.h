@@ -160,7 +160,7 @@ public:
     void resetVoiceOutput(Voice *voice);
     VoiceSettings * getVoiceSettings(unsigned int voiceIndex);
     float getSample(unsigned int voiceIndex);
-    void FUN_0045c4f8(int note, unsigned int wave, unsigned int *param_4, char **param_5);
+    void getWaveData(int note, unsigned int wave, unsigned int *waveDataSize, unsigned char **waveData);
     unsigned int field_209c() { return mField_209c; }
 };
 

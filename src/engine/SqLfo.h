@@ -1,12 +1,11 @@
 #pragma once
 
+#include <functional>
+
 #include "Doc.h"
 
-typedef void (Doc::*DocFunc) (int note, unsigned int wave, char* waveData, unsigned int* waveDataSize);
-
 struct Sq_lfo_settings {
-    DocFunc /* FIELD_a8 */  FIELD_a8; // FUNCTION pointer to doc loads waveform
-    Doc* /* FIELD_ac */ FIELD_ac;
+    std::function<void(int, unsigned int, unsigned int*, unsigned char**)> /* FIELD_a8 */ loadWave;
 
     int /* FIELD_b0 */ frequency; // frequency
     int /* FIELD_b4 */ humanize; // humanize

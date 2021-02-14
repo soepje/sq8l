@@ -491,7 +491,7 @@ void /* FUN_0045c49c */ fun_45c49c(unsigned int note, unsigned int glide_note, i
 }
 
 // TODO test this function
-void /* FUN_0045c4f8 */ Doc::FUN_0045c4f8(int note, unsigned int wave, unsigned int *param_4, char **param_5) {
+void /* FUN_0045c4f8 */ Doc::getWaveData(int note, unsigned int wave, unsigned int *waveDataSize, unsigned char **waveData) {
     unsigned char page;
     unsigned char wsr;
 
@@ -499,8 +499,8 @@ void /* FUN_0045c4f8 */ Doc::FUN_0045c4f8(int note, unsigned int wave, unsigned 
 
     unsigned char x = ((wsr & 0x40) >> 5) | (wsr >> 7);
 
-    *param_4 = ((wsr & 0x38) >> 3) + 8;
-    *param_5 = (char*) &mWaves[((x * 65536) + page * 256) & 0x3ffff]; // TODO fix char to unsigned char
+    *waveDataSize = ((wsr & 0x38) >> 3) + 8;
+    *waveData = &mWaves[((x * 65536) + page * 256) & 0x3ffff];
 }
 
 unsigned int /* FUN_0045c55c */ fun_45c55c(int param_2) {
