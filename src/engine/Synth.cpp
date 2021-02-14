@@ -85,6 +85,8 @@ float /* DAT_004c2530 */ smoothingDurations[2][4] = {
     FUN_0046215c();
 
 //    mField_ff8->FUN_00460db8(0, -1);
+
+    initModulationSources(); // Not original
 }
 
 /* FUN_00461eb4 */ Synth::~Synth() {
