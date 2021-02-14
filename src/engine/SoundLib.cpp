@@ -1,7 +1,6 @@
 #include "SoundLib.h"
 #include "Data.h"
 
-// TODO argument types are not correct
 void /* FUN_00455f0c */ getWaveParameters(unsigned int wave, int note, unsigned char* page, unsigned int* fine, int* semi, unsigned char* wsr) {
     if (wave < 0x4b) {
         if (note < 0) {
@@ -14,7 +13,7 @@ void /* FUN_00455f0c */ getWaveParameters(unsigned int wave, int note, unsigned 
 
         *page = docWaveParameters[index][0];
         *wsr = docWaveParameters[index][1];
-        *semi = static_cast<signed char>(docWaveParameters[index][2]);
+        *semi = docWaveParameters[index][2];
         *fine = docWaveParameters[index][3];
     } else {
         *page = 0;

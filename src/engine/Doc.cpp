@@ -247,8 +247,8 @@ void /* FUN_0045bda4 */ Doc::updateVoiceSettings(unsigned int voiceIndex) {
                     (i == 1 && voiceSettings->sync_enabled != (osc->sync_state == 2));
 
                 int local_50 = 0; // step size
-                unsigned int local_43 = 0; // wsr
-                unsigned int local_44 = 0; // page
+                unsigned char local_43 = 0; // wsr
+                unsigned char local_44 = 0; // page
 
                 if (update_osc_params) {
                     osc->wave = osc_settings->wave;
@@ -459,7 +459,7 @@ void /* FUN_0045c460 */ Doc::setGlideStart(unsigned int voiceIndex, unsigned int
     setGlideStart(voiceIndex, note, false);
 }
 
-void /* FUN_0045c470 */ fun_45c470(int* semi, unsigned int* wsr) {
+void /* FUN_0045c470 */ fun_45c470(int* semi, unsigned char* wsr) {
     *semi = *semi + 12;
 
     if (*semi < 12) {
@@ -477,13 +477,11 @@ void /* FUN_0045c470 */ fun_45c470(int* semi, unsigned int* wsr) {
     }
 }
 
-void /* FUN_0045c49c */ fun_45c49c(unsigned int note, unsigned int glide_note, int* param_4, unsigned int* wsr, unsigned int* page, unsigned int wave, int fine, int semi) {
+void /* FUN_0045c49c */ fun_45c49c(unsigned int note, unsigned int glide_note, int* param_4, unsigned char* wsr, unsigned char* page, unsigned int wave, int fine, int semi) {
     unsigned int /* local_10 */ fine_out;
     int /* local_c */ semi_out;
 
-    // TODO fix call
-    getWaveParameters(wave, note + semi, reinterpret_cast<unsigned char *>(page), &fine_out, &semi_out,
-                      reinterpret_cast<unsigned char *>(wsr));
+    getWaveParameters(wave, note + semi, page, &fine_out, &semi_out, wsr);
 
     semi += semi_out;
 
