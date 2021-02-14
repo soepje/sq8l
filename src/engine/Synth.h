@@ -202,8 +202,8 @@ public:
     void /* FUN_00462380 */ setUpdateRate(float updateRate);
 
     void /* FUN_00462488 */ FUN_00462488();
-    void /* FUN_004624a8 */ FUN_004624a8(short* param_2, unsigned char note, bool mono);
-    void /* FUN_004624f4 */ FUN_004624f4(short* param_2, unsigned char note);
+    void /* FUN_004624a8 */ FUN_004624a8(short* noteHistory, unsigned char note, bool mono);
+    void /* FUN_004624f4 */ FUN_004624f4(short* noteHistory, unsigned char note);
 
     void /* FUN_00462544 */ initVoice(int voiceIndex);
     void /* FUN_00462570 */ initVoices();
@@ -251,7 +251,7 @@ private:
     int /* FIELD_f0c */ mVoiceMapping[16];
     int /* FIELD_f4c */ mField_f4c;
     int /* FIELD_f50 */ mField_f50;
-    short /* FIELD_f54 */ mField_f54[8]; // notes, might be actually [2][4]
+    short /* FIELD_f54 */ mNoteHistory[8]; // notes, might be actually [2][4]
     float /* FIELD_f64 */ mField_f64;
     int /* FIELD_f68 */ mField_f68;
     int /* FIELD_f6c */ mField_f6c;

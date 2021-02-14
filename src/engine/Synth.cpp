@@ -212,33 +212,33 @@ void /* FUN_00462380 */ Synth::setUpdateRate(float updateRate) {
 
 void /* FUN_00462488 */ Synth::FUN_00462488() {
     for (int i = 0; i < 4; i++) {
-        mField_f54[i] = -1;
-        mField_f54[4 + i] = -1;
+        mNoteHistory[i] = -1;
+        mNoteHistory[4 + i] = -1;
     }
 }
 
-void /* FUN_004624a8 */ Synth::FUN_004624a8(short* param_2, unsigned char note, bool mono) {
-    if (param_2 != nullptr && note < 0x80) {
+void /* FUN_004624a8 */ Synth::FUN_004624a8(short* noteHistory, unsigned char note, bool mono) {
+    if (noteHistory != nullptr && note < 0x80) {
         for (int i = 3; i > 0; i--) {
-            param_2[i] = param_2[i - 1];
+            noteHistory[i] = noteHistory[i - 1];
 
             if (mono) {
-                param_2[4 + i] = param_2[3 + i];
+                noteHistory[4 + i] = noteHistory[3 + i];
             }
         }
 
-        param_2[0] = note;
+        noteHistory[0] = note;
         if (mono) {
-            param_2[4] = note;
+            noteHistory[4] = note;
         }
     }
 }
 
-void /* FUN_004624f4 */ Synth::FUN_004624f4(short* param_2, unsigned char note) {
-    if (param_2 != nullptr && note < 0x80) {
+void /* FUN_004624f4 */ Synth::FUN_004624f4(short* noteHistory, unsigned char note) {
+    if (noteHistory != nullptr && note < 0x80) {
         int noteIndex = -1;
         for (int i = 0; i < 4; i++) {
-            if (param_2[4 + i] == note) {
+            if (noteHistory[4 + i] == note) {
                 noteIndex = i;
                 break;
             }
@@ -246,10 +246,10 @@ void /* FUN_004624f4 */ Synth::FUN_004624f4(short* param_2, unsigned char note) 
 
         if (noteIndex > -1 && noteIndex < 3) {
             for (int i = noteIndex; i < 3; i++) {
-                param_2[4 + i] = param_2[5 + i];
+                noteHistory[4 + i] = noteHistory[5 + i];
             }
 
-            param_2[7] = -1;
+            noteHistory[7] = -1;
         }
     }
 }
@@ -800,24 +800,24 @@ void /* FUN_00463388 */ Synth::triggerNote(unsigned char param_2, unsigned char 
 void /* FUN_00463420 */ Synth::triggerNote(unsigned char note, unsigned char velocity, TriggerOptions *triggerOptions, unsigned int voiceGroup) {
     limitVelocity(note); // not used ???
 
-    short* local_1c = mField_f54;
+    short* noteHistory = mNoteHistory;
     Synth_settings* local_14 = mSettings; // mEditBuf->field_a94;
 
     if (velocity < 1 || triggerOptions == nullptr) {
         for (int i = 0; i < mField_f4c; i++) {
             SynthVoice* voice = getVoice(i);
             if (voice->playing != 0 && voice->field_18 == 0 && voice->note == note && voice->group == voiceGroup) {
-                if (voice->field_1c == 0 || local_1c[5] < 0 || local_1c[5] == note) {
+                if (voice->field_1c == 0 || noteHistory[5] < 0 || noteHistory[5] == note) {
                     triggerRelease(mVoiceMapping[i]);
                 } else {
-                    setGlide(mVoiceMapping[i], local_1c[5]);
+                    setGlide(mVoiceMapping[i], noteHistory[5]);
                 }
             }
         }
 
-        FUN_004624f4(local_1c, note);
+        FUN_004624f4(noteHistory, note);
     } else {
-        FUN_004624f4(local_1c, note);
+        FUN_004624f4(noteHistory, note);
 
         if (local_14->mono > 0) {
             bool bVar7 = false;
@@ -834,27 +834,25 @@ void /* FUN_00463420 */ Synth::triggerNote(unsigned char note, unsigned char vel
                 }
             }
 
-            // TODO check references to local_1c
-
             if (voiceIndex < 0) {
                 bool restartOscillators = local_14->restartOscillators; // TODO check
                 int newVoiceIndex = selectVoice();
-//
-                triggerVoice(newVoiceIndex, voiceGroup, true, triggerOptions, restartOscillators, true, false, *local_1c,
+
+                triggerVoice(newVoiceIndex, voiceGroup, true, triggerOptions, restartOscillators, true, false, noteHistory[0],
                              note);
             } else {
                 if (bVar7 || !bVar8) {
                     bool restartOscillators = local_14->restartOscillators;
 
                     triggerVoice(voiceIndex, voiceGroup, true, triggerOptions, restartOscillators, true, velocity,
-                                 mField_f54[3], note);
+                                 mNoteHistory[3], note);
                 } else {
                     triggerVoice(mVoiceMapping[voiceIndex], voiceGroup, false, triggerOptions, false, false, velocity,
-                                 mField_f54[3], note);
+                                 mNoteHistory[3], note);
                 }
             }
 
-            FUN_004624a8(local_1c, note, true);
+            FUN_004624a8(noteHistory, note, true);
         } else {
             char restartVoice = local_14->restartVoice;
             int voiceIndex = -1;
@@ -877,15 +875,15 @@ void /* FUN_00463420 */ Synth::triggerNote(unsigned char note, unsigned char vel
                 int newVoiceIndex = selectVoice();
 
                 triggerVoice(newVoiceIndex, voiceGroup, true, triggerOptions, restartOscillators, true, velocity,
-                             *local_1c, note);
+                             noteHistory[0], note);
             } else {
                 bool restartOscillators = local_14->restartOscillators > 0;
 
-                triggerVoice(voiceIndex, voiceGroup, true, triggerOptions, restartOscillators, true, velocity, *local_1c,
+                triggerVoice(voiceIndex, voiceGroup, true, triggerOptions, restartOscillators, true, velocity, noteHistory[0],
                              note);
             }
 
-            FUN_004624a8(local_1c, note,false);
+            FUN_004624a8(noteHistory, note, false);
         }
     }
 }
@@ -964,9 +962,9 @@ void /* FUN_00463890 */ Synth::updateState(SynthVoice* voice) {
         if (pitchBendMode == 1) {
             applyPitchBend = voice->field_18 == 0;
         } else if (pitchBendMode == 2) {
-            applyPitchBend = voice->note == mField_f54[0];
+            applyPitchBend = voice->note == mNoteHistory[0];
         } else if (pitchBendMode == 3) {
-            applyPitchBend = voice->field_18 == 0 && voice->note == mField_f54[0];
+            applyPitchBend = voice->field_18 == 0 && voice->note == mNoteHistory[0];
         } else {
             applyPitchBend = true;
         }
