@@ -98,9 +98,12 @@ void /* FUN_0045f0f8 */ FilterSq::setSampleRate(float sampleRate) {
 }
 
 void /* FUN_0045f120 */ FilterSq::FUN_0045f120() {
-    // TODO needs checking
-    field_0x48 = field_0x50 = field_0x58 = pow(1.0 / (field_0x78 * 0.5 * mSampleRate + 1), 0.01);
-    field_0x4c = field_0x54 = field_0x5c = 1 - field_0x48;
+    field_0x48 = pow(1.0 / (0.5 * field_0x78 * mSampleRate + 1), 0.01);
+    field_0x4c = 1 - field_0x48;
+    field_0x50 = pow(1.0 / (0.5 * field_0x78 * mSampleRate + 1), 0.01);
+    field_0x54 = 1 - field_0x50;
+    field_0x58 = pow(1.0 / (0.5 * field_0x78 * mSampleRate + 1), 0.01);
+    field_0x5c = 1 - field_0x58;
 }
 
 void /* FUN_0045f1ec */ FilterSq::setCutoff(int cutoff, bool reset) {
