@@ -340,7 +340,7 @@ void /* FUN_004625d4 */ Synth::triggerVoice2(int voiceIndex, int voiceGroup, cha
         voice->group = voiceGroup;
 
         int local_20;
-        if (triggerOptions->field_0 == 0) { // TODO check if field_0 (playing) is checked here or nullptr check
+        if (triggerOptions == nullptr) {
             voice->field_d8 = 0;
             voice->field_dc = 0;
             local_20 = 0;
