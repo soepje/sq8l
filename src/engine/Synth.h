@@ -295,7 +295,7 @@ private:
     // mField_ff8 is an editBuf
     // mField_ffc is a midiparser
     /*  FIELD_1000 */ Doc* mDoc;
-
+    float /* FIELD_1004 */ mFilterTable[16384];
     unsigned  int /* FIELD_11004 */ mField_11004;
     // mFIELD_11008
     // mFIELD_1100c

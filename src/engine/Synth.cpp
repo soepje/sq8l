@@ -68,7 +68,7 @@ float /* DAT_004c2530 */ smoothingDurations[2][4] = {
         }
 
         for (int j = 0; j < 2; j++) {
-            mVoices[i].filters[j] = new FilterSq{nullptr, (float) mSampleRate};
+            mVoices[i].filters[j] = new FilterSq{mFilterTable, (float) mSampleRate};
         }
 
         mVoices[i].amp = new Amp;
@@ -155,9 +155,13 @@ int /* FUN_00462214 */ Synth::setSampleRate(int sampleRate) {
 
             for (auto voice : mVoices) {
                 voice.amp->setSampleRate(mSampleRate);
+
+                for (int j = 0; j < 2; j++) {
+                    voice.filters[j]->setSampleRate(mSampleRate);
+                }
             }
 
-            mVoices[0].filters[1]->initTable4();
+            mVoices[0].filters[0]->initTable4();
 
             setUpdateRate(mUpdateRate);
             FUN_00462174();
@@ -202,8 +206,7 @@ void /* FUN_00462380 */ Synth::setUpdateRate(float updateRate) {
             }
         }
 
-        // TODO
-//        FUN_00417a78((char)param_1 + '\f',(char)param_1 + '\b', 1.00000000 / param_4, param_4);
+        // Here the sample rate is set in AudioEffectX
     }
 }
 
