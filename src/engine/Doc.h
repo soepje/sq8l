@@ -21,7 +21,7 @@ struct Osc {
     unsigned int /* field_44 */ field_44;
     int /* field_48 */ field_48;
     unsigned int /* field_4c */ field_4c;
-    bool /* field_50 */ field_50;
+    int /* field_50 */ field_50;
     unsigned int /* field_54 */ field_54; // sample end ???
     unsigned int /* field_58 */ field_58;
     unsigned int /* field_5c */ sample_index;
