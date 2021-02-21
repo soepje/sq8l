@@ -165,6 +165,6 @@ public:
 };
 
 void fun_45c470(int* semi, unsigned char* wsr);
-void fun_45c49c(unsigned int note, unsigned int glide_note, int* param_4, unsigned char* wsr, unsigned char* page, unsigned int wave, int fine, int semi);
+void fun_45c49c(unsigned int note, unsigned int glide_note, int* pitch, unsigned char* wsr, unsigned char* page, unsigned int wave, int fine, int semi);
 unsigned int fun_45c55c(int param_2);
-unsigned int getVolume2(int pitchIndex);
+unsigned int pitchToFrequency(int pitch);

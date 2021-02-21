@@ -7,37 +7,37 @@
 #include "SoundLib.h"
 #include "PackDlt.h"
 
-unsigned int /* FUN_0045b8b4 */ getVolume2(int pitchIndex) {
-    while (pitchIndex >= 0x8000) {
-        pitchIndex -= 0xc00;
+unsigned int /* FUN_0045b8b4 */ pitchToFrequency(int pitch) {
+    while (pitch >= 0x8000) {
+        pitch -= 0xc00;
     }
 
-    if (pitchIndex < 0) {
-        pitchIndex = 0;
+    if (pitch < 0) {
+        pitch = 0;
     } else {
-        pitchIndex /= 8;
+        pitch /= 8;
     }
 
-    unsigned int volume;
-    if ((pitchIndex & 1) == 0) {
-        pitchIndex >>= 1;
+    unsigned int frequency;
+    if ((pitch & 1) == 0) {
+        pitch >>= 1;
 
-        if (pitchIndex >= 0x800) {
-            volume = docVolumeCurve2[0x800];
+        if (pitch >= 0x800) {
+            frequency = docFrequencyCurve[0x800];
         } else {
-            volume = docVolumeCurve2[pitchIndex];
+            frequency = docFrequencyCurve[pitch];
         }
     } else {
-        pitchIndex >>= 1;
+        pitch >>= 1;
 
-        if (pitchIndex >= 0x800) {
-            volume = docVolumeCurve2[0x800];
+        if (pitch >= 0x800) {
+            frequency = docFrequencyCurve[0x800];
         } else {
-            volume = (docVolumeCurve2[pitchIndex] + docVolumeCurve2[pitchIndex + 1]) / 2;
+            frequency = (docFrequencyCurve[pitch] + docFrequencyCurve[pitch + 1]) / 2;
         }
     }
 
-    return volume;
+    return frequency;
 }
 
 /* FUN_0045b9e0 */ Doc::Doc(unsigned int numVoices) {
@@ -246,19 +246,19 @@ void /* FUN_0045bda4 */ Doc::updateVoiceSettings(unsigned int voiceIndex) {
                     osc->semi != osc_settings->semi || osc->fine != osc_settings->fine ||
                     (i == 1 && voiceSettings->sync_enabled != (osc->sync_state == 2));
 
-                int local_50 = 0; // step size
-                unsigned char local_43 = 0; // wsr
-                unsigned char local_44 = 0; // page
+                int pitch = 0;
+                unsigned char wsr = 0;
+                unsigned char page = 0;
 
                 if (update_osc_params) {
                     osc->wave = osc_settings->wave;
                     osc->semi = osc_settings->semi;
                     osc->fine = osc_settings->fine;
 
-                    fun_45c49c(voice->note, voice->glideNote, &local_50, &local_43, &local_44,
+                    fun_45c49c(voice->note, voice->glideNote, &pitch, &wsr, &page,
                                osc_settings->wave, osc_settings->fine, osc_settings->semi);
                 } else {
-                    local_50 = osc->field_14;
+                    pitch = osc->field_14;
                 }
 
                 bool local_24 = voiceSettings->restartOsc;
@@ -301,7 +301,7 @@ void /* FUN_0045bda4 */ Doc::updateVoiceSettings(unsigned int voiceIndex) {
                 int local_30 = 0; // TODO
 
                 if (i == 0) {
-                    local_30 = local_43;
+                    local_30 = wsr;
                     local_2c = false;
                 } else if (i == 1) {
                     local_2c = voiceSettings->am_enabled;
@@ -311,18 +311,18 @@ void /* FUN_0045bda4 */ Doc::updateVoiceSettings(unsigned int voiceIndex) {
 
                 osc->field_0 = osc_settings->enabled;
                 osc->field_4 = true;
-                osc->field_14 = local_50;
+                osc->field_14 = pitch;
 
-                local_50 += osc_settings->field_14;
+                pitch += osc_settings->field_14;
 
-                if (local_50 < 0) {
-                    local_50 = 0;
+                if (pitch < 0) {
+                    pitch = 0;
                 }
 
-                osc->field_18 = local_50;
+                osc->field_18 = pitch;
                 osc->field_1c = osc_settings->field_14;
                 osc->field_20 = osc_settings->level;
-                osc->field_60 = fun_45c55c(local_50);
+                osc->field_60 = fun_45c55c(pitch);
 
                 if (local_24) {
                     osc->sample_index = 0;
@@ -337,20 +337,20 @@ void /* FUN_0045bda4 */ Doc::updateVoiceSettings(unsigned int voiceIndex) {
                 osc->stopped = false;
 
                 if (update_osc_params) {
-                    osc->rom = local_44;
+                    osc->rom = page;
                     osc->sync_state = local_28;
 
                     if (local_2c && voiceSettings->am_bug_enabled) {
                         osc->am_enabled = true;
-                        osc->field_3c = ((local_43 & 0x40) >> 5) | (local_30 >> 7);
+                        osc->field_3c = ((wsr & 0x40) >> 5) | (local_30 >> 7);
                     } else {
                         osc->am_enabled = false;
-                        osc->field_3c = ((local_43 & 0x40) >> 5) | (local_43 >> 7);
+                        osc->field_3c = ((wsr & 0x40) >> 5) | (wsr >> 7);
                     }
 
-                    osc->field_48 = ((local_43 & 0x38) >> 3) + 8;
+                    osc->field_48 = ((wsr & 0x38) >> 3) + 8;
                     osc->field_4c = 1 << osc->field_48;
-                    osc->field_50 = local_43 & 7;
+                    osc->field_50 = wsr & 7;
                     osc->field_44 = osc->field_3c * 0x10000 + osc->rom * 0x100;
                     osc->field_54 = (1 << ((osc->field_50 + 0x11) & 0x1f)) - 1;
                     osc->field_58 = (osc->field_50 + 0x11) - osc->field_48;
@@ -477,7 +477,7 @@ void /* FUN_0045c470 */ fun_45c470(int* semi, unsigned char* wsr) {
     }
 }
 
-void /* FUN_0045c49c */ fun_45c49c(unsigned int note, unsigned int glide_note, int* param_4, unsigned char* wsr, unsigned char* page, unsigned int wave, int fine, int semi) {
+void /* FUN_0045c49c */ fun_45c49c(unsigned int note, unsigned int glide_note, int* pitch, unsigned char* wsr, unsigned char* page, unsigned int wave, int fine, int semi) {
     unsigned int /* local_10 */ fine_out;
     int /* local_c */ semi_out;
 
@@ -487,7 +487,7 @@ void /* FUN_0045c49c */ fun_45c49c(unsigned int note, unsigned int glide_note, i
 
     fun_45c470(&semi, wsr);
 
-    *param_4 = (glide_note + semi) * 256 + fine * 8 + fine_out;
+    *pitch = (glide_note + semi) * 256 + fine * 8 + fine_out;
 }
 
 // TODO test this function
@@ -504,7 +504,7 @@ void /* FUN_0045c4f8 */ Doc::getWaveData(int note, unsigned int wave, unsigned i
 }
 
 unsigned int /* FUN_0045c55c */ fun_45c55c(int param_2) {
-    return getVolume2(param_2 - 0x10);
+    return pitchToFrequency(param_2 - 0x10);
 }
 
 float /* FUN_0045c568 */ Doc::getVolume(unsigned int volumeIndex) {
