@@ -6,7 +6,7 @@ void /* FUN_0044feec */ initModulationSources() {
 
     for (int i = 0; i < 16; i++) {
         modulationSources[i + 1][0] = 1;
-        modulationSources[i + 1][1] = 1;
+        modulationSources[i + 1][1] = i;
     }
 
     for (int i = 0; i < 130; i++) {
