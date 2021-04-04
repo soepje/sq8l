@@ -28,7 +28,7 @@ TEST_CASE( "Waveform unpacking is checked", "[waveform]" ) {
 
 TEST_CASE("WSR adjust", "[doc]") {
     int semi = -24;
-    unsigned int wsr = 9;
+    unsigned char wsr = 9;
 
     fun_45c470(&semi, &wsr);
 
@@ -54,8 +54,8 @@ TEST_CASE("WSR adjust", "[doc]") {
 
 TEST_CASE("load wave params", "[doc2]") {
     int a = 0;
-    unsigned int wsr = 0;
-    unsigned int page = 0;
+    unsigned char wsr = 0;
+    unsigned char page = 0;
 
     fun_45c49c(0x39, 0x39, &a, &wsr, &page, 3, 0, 0);
 
@@ -65,8 +65,8 @@ TEST_CASE("load wave params", "[doc2]") {
 }
 
 TEST_CASE("load something", "[asdf]") {
-    REQUIRE(getVolume2(0x51f0) == 0xc69);
-    REQUIRE(getVolume2(0x45f0) == 0x635);
-    REQUIRE(getVolume2(0x4604) == 0x63a);
-    REQUIRE(getVolume2(0x64f2) == 0x2531);
+    REQUIRE(pitchToFrequency(0x51f0) == 0xc69);
+    REQUIRE(pitchToFrequency(0x45f0) == 0x635);
+    REQUIRE(pitchToFrequency(0x4604) == 0x63a);
+    REQUIRE(pitchToFrequency(0x64f2) == 0x2531);
 }
