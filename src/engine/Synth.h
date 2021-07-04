@@ -28,10 +28,10 @@ struct SynthLfoSettings {
 struct ModulationMatrixSettings {
     short /* field_0 */ modulationSource1;
     char /* field_2 */ modulationAmount1;
-    short /* field_3 */ modulationAmount2;
-    char /* field_5 */ modulationSource2;
-    short /* field_6 */ modulationAmount3;
-    char /* field_8 */ modulationSource3;
+    short /* field_3 */ modulationSource2;
+    char /* field_5 */ modulationAmount2;
+    short /* field_6 */ modulationSource3;
+    char /* field_8 */ modulationAmount3;
     short /* field_9 */ amplitudeModulationSource;
     char /* field_b */ amplitudeModulationAmount;
 };
