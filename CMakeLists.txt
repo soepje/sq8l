@@ -39,3 +39,16 @@ add_executable(functional_tests
 target_include_directories(functional_tests PUBLIC src/engine lib/catch)
 target_link_libraries(functional_tests PRIVATE m dl)
 target_link_libraries(functional_tests PRIVATE catch engine portaudio)
+
+# Plugin
+add_library(plugin
+        src/plugin/program.cpp)
+
+target_include_directories(plugin PUBLIC src/engine)
+target_link_libraries(plugin PRIVATE engine)
+
+add_executable(program_test
+        src/plugin/program_test.cpp)
+
+target_include_directories(program_test PUBLIC src/engine lib/catch)
+target_link_libraries(program_test PRIVATE catch engine plugin)

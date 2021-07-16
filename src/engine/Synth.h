@@ -9,7 +9,7 @@
 // Size: 0x10
 struct SynthLfoSettings {
     unsigned char /* field_0 */ frequency;
-    unsigned char /* field_1 */ field_1;
+    char /* field_1 */ reset;
     char /* field_2 */ humanize;
     unsigned char /* field_3 */ wave;
     char /* field_4 */ startAmplitude;

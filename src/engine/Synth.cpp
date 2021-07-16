@@ -371,7 +371,7 @@ void /* FUN_004625d4 */ Synth::triggerVoice2(int voiceIndex, int voiceGroup, cha
                 SynthLfoSettings lfoSettings = voice->settings->lfoSettings[i];
 
                 // TODO still a bit confused about this bit
-                int iVar6 = lfoSettings.field_1;
+                int iVar6 = lfoSettings.reset;
                 bool resetCounter = iVar6 >= 0;
                 if (!resetCounter) {
                     iVar6 = 0;
