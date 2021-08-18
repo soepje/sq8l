@@ -116,9 +116,9 @@ void /* FUN_00462174 */ Synth::FUN_00462174() {
 
     mDoc->initVoices2();
 
-    memset(mMidiModulation, 0, 0x830);
-    memset((char*) &mPitchBendModulation, 0, 0x10);
-    memset(mNoteModulation, 0, 0x800);
+    std::fill_n(mMidiModulation, 131, MidiModulationSource{});
+    std::fill_n(mNoteModulation, 128, MidiModulationSource{});
+    mPitchBendModulation = MidiModulationSource{};
 
     mMidiModulation[8].modulation = 127;
     mMidiModulation[9].modulation = 64; // panning
