@@ -176,8 +176,8 @@ void /* FUN_0045e69c */ Amp::setParameters(unsigned int volume, int panning, boo
         mVolume[1] = mTargetVolume[1];
     }
 
-    mTargetVolume[0] = ampPanningTable[mPanningIndex][0] * ampVolumeCurve[volume] * totalGain;
-    mTargetVolume[1] = ampPanningTable[mPanningIndex][1] * ampVolumeCurve[volume] * totalGain;
+    mTargetVolume[0] = ampPanningTable[mPanningIndex + 63][0] * ampVolumeCurve[volume] * totalGain;
+    mTargetVolume[1] = ampPanningTable[mPanningIndex + 63][1] * ampVolumeCurve[volume] * totalGain;
 
     if (mTargetVolume[0] < 1e-06) {
         mTargetVolume[0] = 1e-06;
