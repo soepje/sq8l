@@ -13,3 +13,7 @@ don't expect too much.
 [1]: https://www.youtube.com/watch?v=KEdNgJsq68w
 [2]: https://ghidra-sre.org/
 [3]: https://frida.re/
+
+## TODO
+
+fix voice stealing mode hard

@@ -2,6 +2,7 @@
 
 #include <juce_audio_processors/juce_audio_processors.h>
 #include "Synth.h"
+#include "ProgramManager.h"
 
 //==============================================================================
 class AudioPluginAudioProcessor  : public juce::AudioProcessor
@@ -10,8 +11,8 @@ public:
     juce::MidiKeyboardState midiKeyboardState;
     Synth synth;
     Synth_settings settings;
-    std::vector<Synth_settings> presets;
-    int currentPreset;
+    juce::AudioProcessorValueTreeState parameters;
+    ProgramManager programManager;
 
     //==============================================================================
     AudioPluginAudioProcessor();
@@ -50,6 +51,7 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
 private:
+    void updateSettings();
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessor)

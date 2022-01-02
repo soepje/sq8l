@@ -836,23 +836,20 @@ void /* FUN_00463420 */ Synth::triggerNote(unsigned char note, unsigned char vel
                 }
             }
 
-            // If there is not voice playing
             if (voiceIndex < 0) {
                 bool restartOscillators = local_14->restartOscillators; // TODO check
                 int newVoiceIndex = selectVoice();
 
-                triggerVoice(newVoiceIndex, voiceGroup, true, triggerOptions, restartOscillators, true, false, noteHistory[0],
-                             note);
-            } else {
-                if (bVar7 || !bVar8) {
-                    bool restartOscillators = local_14->restartOscillators;
+                triggerVoice(newVoiceIndex, voiceGroup, true, triggerOptions, restartOscillators, true, velocity, 
+                             noteHistory[0], note);
+            } else if (bVar7 || !bVar8) {
+                bool restartOscillators = local_14->restartOscillators;
 
-                    triggerVoice(voiceIndex, voiceGroup, true, triggerOptions, restartOscillators, true, velocity,
-                                 mNoteHistory[3], note);
-                } else {
-                    triggerVoice(mVoiceMapping[voiceIndex], voiceGroup, false, triggerOptions, false, false, velocity,
-                                 mNoteHistory[3], note);
-                }
+                triggerVoice(voiceIndex, voiceGroup, true, triggerOptions, restartOscillators, true, velocity,
+                             mNoteHistory[4], note);
+            } else {
+                triggerVoice(mVoiceMapping[voiceIndex], voiceGroup, false, triggerOptions, false, false, velocity,
+                             mNoteHistory[4], note);
             }
 
             FUN_004624a8(noteHistory, note, true);

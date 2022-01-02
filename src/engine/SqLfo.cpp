@@ -270,7 +270,7 @@ void SqLfo::setDelayMode(bool smootherFading) {
         mSmootherFading = 0;
     }
 
-    char DAT_004c1e88[2] = { 0, 4 };
+    char DAT_004c1e88[2] = { 1, 4 };
     char DAT_004c1e8c[2] = { 0, 3 };
 
     mAmplitudeFactor = DAT_004c1e88[mSmootherFading];
@@ -511,143 +511,141 @@ void SqLfo::updateSettings() {
 }
 
 int SqLfo::calculateSample() {
-    int output;
-
     char var14;
-    char samples[2];
+    char samples[2] = {0, 0};
 
-    if (mRunning > 0) {
-        for (int i = 0; i < mTwinMode + 1; i++) {
-            int x = mWaveOffsets[i] + mCounter;
-
-            // tri, saw, square, noise, bip
-            switch (mWave) {
-                case 0:
-                    var14 = x >> 22;
-                    if (var14 < 0) {
-                        samples[i] = (~var14 - 0x40) * 2;
-                    } else {
-                        samples[i] = (var14 + 0x40) * 2;
-                    }
-                    break;
-                case 1:
-                    samples[i] = (x >> 22) + 0x80;
-                    break;
-                case 2:
-                    var14 = x >> 22;
-                    if (var14 < 0) {
-                        samples[i] = 0;
-                    } else {
-                        samples[i] = 0x7f;
-                    }
-                    break;
-                case 3:
-                    var14 = x >> 22;
-//                    buf[i] = byte_4c1f10[var14];
-                    break;
-                case 4:
-                    var14 = x >> 22;
-                    if (var14 < 0) {
-                        samples[i] = 0x81;
-                    } else {
-                        samples[i] = 0x7f;
-                    }
-                    break;
-                default:
-
-                    break;
-            }
-        }
-
-        int x = (int) samples[0] + (int) samples[1];
-        if (x < -0x7e) {
-            samples[0] = -0x7f;
-        } else if (x < 0x7f) {
-            samples[0] = (char) x;
-        } else {
-            samples[0] = 0x7f;
-        }
-
-        if (mSmoothness > 0) {
-            int sample = (mPreviousSample * mPreviousSampleMix + samples[0] * mCurrentSampleMix) * 256;
-            samples[0] = sample / 65536;
-            mPreviousSample = sample / 256;
-            // TODO
-        }
-
-        output = (mAmplitudeModulation << FIELD_91) + mAmplitude;
-        if (output < 1) {
-            output = 0;
-        } else if (mSmootherFading > 0) {
-            output = (samples[0] * output) / 2048;
-        } else {
-            output = (samples[0] * output) / 256;
-        }
-
-        mCounter += mCounterIncrement;
-        if (mOneShot && mCounter > 0x40000000) {
-            mRunning = 0;
-        }
-
-        int iVar6;
-        if (FIELD_88 < 1) {
-            FIELD_88 += FIELD_8c;
-            iVar6 = -1;
-        } else {
-            FIELD_88 -= 0x400;
-            iVar6 = 0;
-        }
-
-        if (mSmootherFading > 0 || iVar6 != 0) {
-            int fading = mFading;
-            if (fading != 0) {
-                if (fading < 1) {
-                    mAmplitude += fading;
-                    if (mAmplitude < mFinalAmplitude2) {
-                        mAmplitude = mFinalAmplitude2;
-                        mFading = 0;
-                    }
-                } else {
-                    mAmplitude += fading;
-                    if (mFinalAmplitude2 < mAmplitude) {
-                        mAmplitude = mFinalAmplitude2;
-                        mFading = 0;
-                    }
-                }
-            }
-            if (FIELD_60 < 0x7fffffff) {
-                FIELD_60 += 1;
-            }
-        }
-
-        if (mHumanize > 0 && iVar6 != 0) {
-            if (mHumanize > 1 || mFading == 0) {
-                char humanization = humanizationData[FIELD_7c];
-                if (humanization != 0) {
-                    if (mHumanizationFactor > 0) {
-                        mFrequencyHumanization += mHumanization * mHumanizationFactor;
-                    }
-                    mHumanization = humanization * 256;
-                    if (mHumanize < 3) {
-                        mHumanizationFactor = 1;
-                    } else {
-                        mHumanizationFactor = 1 << (mHumanize - 2);
-                    }
-                }
-
-                if (mHumanizationFactor > 0) {
-                    mFrequencyHumanization += mHumanization;
-                    mHumanizationFactor -= 1;
-                }
-            }
-
-            FIELD_7c += 1;
-        }
-
-        mOutput = output;
-    } else {
-        output = mOutput;
+    if (mRunning == 0) {
+        return mOutput;
     }
+
+    for (int i = 0; i < mTwinMode + 1; i++) {
+        int x = mWaveOffsets[i] + mCounter;
+
+        // tri, saw, square, noise, bip
+        switch (mWave) {
+            case 0:
+                var14 = x >> 22;
+                if (var14 < 0) {
+                    samples[i] = (~var14 - 0x40) * 2;
+                } else {
+                    samples[i] = (var14 + 0x40) * 2;
+                }
+                break;
+            case 1:
+                samples[i] = (x >> 22) + 0x80;
+                break;
+            case 2:
+                var14 = x >> 22;
+                if (var14 < 0) {
+                    samples[i] = 0;
+                } else {
+                    samples[i] = 0x7f;
+                }
+                break;
+            case 3:
+                var14 = x >> 22;
+//                    buf[i] = byte_4c1f10[var14];
+                break;
+            case 4:
+                var14 = x >> 22;
+                if (var14 < 0) {
+                    samples[i] = 0x81;
+                } else {
+                    samples[i] = 0x7f;
+                }
+                break;
+            default:
+
+                break;
+        }
+    }
+
+    int x = (int) samples[0] + (int) samples[1];
+    if (x < -0x7e) {
+        samples[0] = -0x7f;
+    } else if (x < 0x7f) {
+        samples[0] = (char) x;
+    } else {
+        samples[0] = 0x7f;
+    }
+
+    if (mSmoothness > 0) {
+        int sample = (mPreviousSample * mPreviousSampleMix + samples[0] * mCurrentSampleMix) * 256;
+        samples[0] = sample / 65536;
+        mPreviousSample = sample / 256;
+        // TODO
+    }
+
+    int output = (mAmplitudeModulation << FIELD_91) + mAmplitude;
+    if (output < 1) {
+        output = 0;
+    } else if (mSmootherFading > 0) {
+        output = (samples[0] * output) / 2048;
+    } else {
+        output = (samples[0] * output) / 256;
+    }
+
+    mCounter += mCounterIncrement;
+    if (mOneShot && mCounter > 0x40000000) {
+        mRunning = 0;
+    }
+
+    int iVar6;
+    if (FIELD_88 < 1) {
+        FIELD_88 += FIELD_8c;
+        iVar6 = -1;
+    } else {
+        FIELD_88 -= 0x400;
+        iVar6 = 0;
+    }
+
+    if (mSmootherFading > 0 || iVar6 != 0) {
+        int fading = mFading;
+        if (fading != 0) {
+            if (fading < 1) {
+                mAmplitude += fading;
+                if (mAmplitude < mFinalAmplitude2) {
+                    mAmplitude = mFinalAmplitude2;
+                    mFading = 0;
+                }
+            } else {
+                mAmplitude += fading;
+                if (mFinalAmplitude2 < mAmplitude) {
+                    mAmplitude = mFinalAmplitude2;
+                    mFading = 0;
+                }
+            }
+        }
+        if (FIELD_60 < 0x7fffffff) {
+            FIELD_60 += 1;
+        }
+    }
+
+    if (mHumanize > 0 && iVar6 != 0) {
+        if (mHumanize > 1 || mFading == 0) {
+            char humanization = humanizationData[FIELD_7c];
+            if (humanization != 0) {
+                if (mHumanizationFactor > 0) {
+                    mFrequencyHumanization += mHumanization * mHumanizationFactor;
+                }
+                mHumanization = humanization * 256;
+                if (mHumanize < 3) {
+                    mHumanizationFactor = 1;
+                } else {
+                    mHumanizationFactor = 1 << (mHumanize - 2);
+                }
+            }
+
+            if (mHumanizationFactor > 0) {
+                mFrequencyHumanization += mHumanization;
+                mHumanizationFactor -= 1;
+            }
+        }
+
+        FIELD_7c += 1;
+    }
+
+    mOutput = output;
 
     return output;
 }

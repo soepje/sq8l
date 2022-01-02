@@ -273,7 +273,7 @@ public:
     */
     void addListener (Listener* newListener);
 
-    /** Removes a previously registered parameter listener
+    /** Removes a preAudioProcessorParameterviously registered parameter listener
 
         @see addListener
     */
