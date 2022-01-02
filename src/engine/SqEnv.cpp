@@ -13,7 +13,7 @@ void SqEnv::init() {
     mAdvanceStage = &SqEnv::startDecayStage;
 
     mRunning = false;
-    field_61 = false; // is only set, never read ???
+    field_61 = false;
     mReleased = false;
     mSustaining = false;
     mFinalStep = false;

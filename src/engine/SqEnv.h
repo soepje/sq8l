@@ -31,7 +31,7 @@ private:
     int /* field_58 */ mShapingCurveIndex;
     char* /* field_5c */ mShapingCurve;
     bool /* field_60 */ mRunning;
-    bool /* field_61 */ field_61;
+    bool /* field_61 */ field_61; // # TODO there is probably also a getter for this member, same as mRunning, find out where in the engine this member is used
     bool /* field_62 */ mReleased;
     bool /* field_63 */ mSustaining;
     bool /* field_64 */ mFinalStep;
