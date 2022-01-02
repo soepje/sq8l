@@ -824,6 +824,7 @@ void /* FUN_00463420 */ Synth::triggerNote(unsigned char note, unsigned char vel
             bool bVar8 = false;
             int voiceIndex = -1;
 
+            // Find voice that is playing
             for (int i = 0; i < mField_f4c; i++) {
                 SynthVoice* voice = getVoice(i);
 
@@ -831,9 +832,11 @@ void /* FUN_00463420 */ Synth::triggerNote(unsigned char note, unsigned char vel
                     bVar7 = voice->field_18 != 0;
                     bVar8 = voice->field_1c != 0;
                     voiceIndex = i;
+                    break;
                 }
             }
 
+            // If there is not voice playing
             if (voiceIndex < 0) {
                 bool restartOscillators = local_14->restartOscillators; // TODO check
                 int newVoiceIndex = selectVoice();
@@ -1178,7 +1181,7 @@ void /* FUN_00463890 */ Synth::updateState(SynthVoice* voice) {
         int ampVolume = round(((x / 64) * (iVar15 + (amplitudeModulation2 / 64)) * (1.0 / 127)));
         int ampPanning = synthSettings->ampSettings.stereoPanning + voice->field_dc + (panningModulation / 128);
 
-        ampVolume = voice->envs[3]->getOutput(); // TODO remove, for debugging
+//        ampVolume = voice->envs[3]->getOutput(); // TODO remove, for debugging
 
         int /* DAT_4C2550 */ DAT_4C2550[2] = {0, 0};
 

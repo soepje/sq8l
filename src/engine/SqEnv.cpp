@@ -14,8 +14,8 @@ void SqEnv::init() {
 
     mRunning = false;
     field_61 = false; // is only set, never read ???
-    field_62 = false;
-    field_63 = false;
+    mReleased = false;
+    mSustaining = false;
     mFinalStep = false;
 
     for (int i = 0; i < 5; i++) {
@@ -108,7 +108,7 @@ void SqEnv::triggerAttack(Env_settings* settings, int pitch, SqEnv* other, bool 
     }
 
     int uVar5;
-    if (settings->options & 0x10 == 0) {
+    if ((settings->options & 0x10) == 0) {
         uVar5 = (settings->attackTimeModulation * velocity) / 128;
         setOutputSmoothness(settings->outputSmoothness * 4);
     } else {
@@ -136,8 +136,8 @@ void SqEnv::triggerAttack(Env_settings* settings, int pitch, SqEnv* other, bool 
 
     mRunning = true;
     field_61 = false;
-    field_62 = false;
-    field_63 = false;
+    mReleased = false;
+    mSustaining = false;
     mFinalStep = false;
 
     setTargetLevelAndTime((mLevels[1] * mLevelModulation) / 256, mTimes[0] - uVar5);
@@ -178,10 +178,10 @@ void SqEnv::setTargetLevelAndTime(int level, int time) {
 void SqEnv::triggerRelease(bool sustain) {
     if(!mCycle) {
         if (sustain) {
-            field_63 = true;
+            mSustaining = true;
         } else {
-            field_62 = true;
-            field_63 = false;
+            mReleased = true;
+            mSustaining = false;
             selectReleaseStage();
         }
     }
@@ -267,8 +267,7 @@ void SqEnv::startReleaseStage() {
         return;
     }
 
-    // TODO verify this check
-    if (!field_62 && !mCycle) {
+    if (!mReleased && !mCycle) {
         field_61 = true;
         mStepFunction = &SqEnv::emptyFunction;
     } else {
@@ -316,7 +315,7 @@ int SqEnv::getOutputAndStep(bool sustain) {
         return 0;
     }
 
-    if (!sustain && field_63) {
+    if (!sustain && mSustaining) {
         triggerRelease(false);
     }
 

@@ -32,8 +32,8 @@ private:
     char* /* field_5c */ mShapingCurve;
     bool /* field_60 */ mRunning;
     bool /* field_61 */ field_61;
-    bool /* field_62 */ field_62;
-    bool /* field_63 */ field_63;
+    bool /* field_62 */ mReleased;
+    bool /* field_63 */ mSustaining;
     bool /* field_64 */ mFinalStep;
     void /* field_68 */ (SqEnv::*mStepFunction)();
     void /* field_70 */ (SqEnv::*mAdvanceStage)();
@@ -43,7 +43,7 @@ private:
 public:
     /* FUN_0045dbcc */ explicit SqEnv(float sampleRate);
     /* FUN_0045dc14 */ // ~SqEnv();
-    void /* FUN_0045dcb8 */ setSampleRate(float x);
+    void /* FUN_0045dcb8 */ setSampleRate(float sampleRate);
     void /* FUN_0045dd2c */ triggerAttack(Env_settings* settings, int pitch, SqEnv* other, bool cycle, bool clearLevels, int velocity);
     void /* FUN_0045dfb4 */ triggerRelease(bool sustain);
     int /* FUN_0045e1d4 */ getOutput();

@@ -1,5 +1,6 @@
 #pragma once
 
+// Size: 0x70
 struct Osc {
     bool /* field_0 */ field_0;
     bool /* field_4 */ field_4;
@@ -31,6 +32,7 @@ struct Osc {
     bool /* field_6c */ am_enabled;
 };
 
+// Size: 0x200
 struct Voice {
     Osc /* field_0 */ oscillators[3];
 
@@ -68,6 +70,7 @@ struct OscSettings {
     int /* field_18 */ field_18;
 };
 
+// Size: 0x80
 struct VoiceSettings {
     OscSettings /* field_0 */ oscSettings[3];
 

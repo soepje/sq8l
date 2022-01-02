@@ -55,9 +55,11 @@ unsigned int /* FUN_0045b8b4 */ pitchToFrequency(int pitch) {
 }
 
 /* FUN_0045ba78 */ Doc::~Doc() {
-    if (mWaves != nullptr) {
-        free(mWaves);
-    }
+    // TODO fix munmap_chunk(): invalid pointer
+
+//    if (mWaves != nullptr) {
+//        std::free(mWaves);
+//    }
 }
 
 void /* FUN_0045baac */ Doc::init() {
