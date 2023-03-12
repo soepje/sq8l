@@ -237,7 +237,7 @@ void SqLfo::setSampleRate(float sampleRate) {
         mClockRatio = 83.59257507324219 / sampleRate;
         mFrequencyFactor = mClockRatio;
         mLowFrequencyFactor = mFrequencyFactor / 7.0;
-        mUpdateInterval = (int) round(mClockRatio * 7296);
+        mUpdateInterval = static_cast<int>(std::round(mClockRatio * 7296));
     }
   
     init();
@@ -288,7 +288,6 @@ void SqLfo::init() {
     mAmplitudeModulation = 0;
 }
 
-// LFO Delay Mode (EMU=like SQ80, SMTH=smoother fading)
 void SqLfo::setDelayMode(bool smooth) {
     mAmplitude = mAmplitude >> mAmplitudeShift;
 
@@ -298,15 +297,15 @@ void SqLfo::setDelayMode(bool smooth) {
         mDelayMode = 0;
     }
 
-    char DAT_004c1e88[2] = { 1, 4 };
-    char DAT_004c1e8c[2] = { 0, 3 };
+    char amplitudeShift[2] = {1, 4};
+    char amplitudeModulationShift[2] = {0, 3};
 
-    mAmplitudeShift = DAT_004c1e88[mDelayMode];
-    mAmplitudeModulationShift = DAT_004c1e8c[mDelayMode];
+    mAmplitudeShift = amplitudeShift[mDelayMode];
+    mAmplitudeModulationShift = amplitudeModulationShift[mDelayMode];
+
     mAmplitude = mAmplitude << mAmplitudeShift;
 }
 
-// Smoothness of LFO output (0=neutral)
 void SqLfo::setOutputSmoothness(int smoothness) {
     if (smoothness < 1) {
         mSmoothness = 0;
@@ -368,7 +367,7 @@ void SqLfo::reset(int resetToPhase, bool resetPhase) {
     mWave = 0;
     mPhaseIncrementShift = 0;
 
-    mHumanizationCounter = mHumanizationCounter % 256; // TODO not modulo
+    mHumanizationCounter = mHumanizationCounter & 0xff;
 
     if (mSettings.humanize < 2) {
         mHumanization = 0;
@@ -391,18 +390,18 @@ void SqLfo::updateSettings() {
 
         mFinalAmplitude2 = mSettings.finalAmplitude << mAmplitudeShift;
         
-        int iVar2 = mSettings.startAmplitude;
-        if (mSettings.finalAmplitude == iVar2 || mSettings.delay < 1) {
+        int amplitude = mSettings.startAmplitude;
+        if (mSettings.finalAmplitude == amplitude || mSettings.delay < 1) {
             mDelay = 0;
             if (mSettings.delay < 1) {
-                mAmplitude = iVar2 << mAmplitudeShift;
+                mAmplitude = amplitude << mAmplitudeShift;
             }
-        } else if (mSettings.finalAmplitude < iVar2) {
+        } else if (mSettings.finalAmplitude < amplitude) {
             if (mDelayMode < 1) {
                 int local_c = mDelayCounter * mSettings.delay;
-                mAmplitude = (iVar2 << mAmplitudeShift) - round(local_c * (8.0 / 65.0)); // 0.123076923076923083755
+                mAmplitude = (amplitude << mAmplitudeShift) - round(local_c * (8.0 / 65.0)); // 0.123076923076923083755
             } else {
-                mAmplitude = (iVar2 << mAmplitudeShift) - (mDelayCounter * mSettings.delay);
+                mAmplitude = (amplitude << mAmplitudeShift) - (mDelayCounter * mSettings.delay);
             }
 
             if (mFinalAmplitude2 < mAmplitude) {
@@ -418,9 +417,9 @@ void SqLfo::updateSettings() {
         } else {
             if (mDelayMode < 1) {
                 int local_c = mDelayCounter * mSettings.delay;
-                mAmplitude = round(local_c * (8 / 65)) + (iVar2 << mAmplitudeShift);
+                mAmplitude = round(local_c * (8 / 65)) + (amplitude << mAmplitudeShift);
             } else {
-                mAmplitude = (iVar2 << mAmplitudeShift) + (mDelayCounter * mSettings.delay);
+                mAmplitude = (amplitude << mAmplitudeShift) + (mDelayCounter * mSettings.delay);
             }
 
             if (mAmplitude < mFinalAmplitude2) {
@@ -449,21 +448,20 @@ void SqLfo::updateSettings() {
         } else if (wave < 0x4b) {
 
             if (mSettings.loadWave != nullptr) {
-                int wave = mSettings.wave - 5;
+                wave = mSettings.wave - 5;
 
-                int iVar1; // TODO
-                int local_10; // TODO
+                uint32_t waveDataSize = 0;
 
-                if (iVar1 < 0 || iVar1 > 0x45) {
+                if (wave < 0 || wave > 0x45) {
                     mWaveData = nullptr;
                 } else {
-//                    FIELD_a8(waveParams[wave][1] + FIELD_e8, waveParams[wave][0], &local_10, &mWaveData); // TODO
+                    mSettings.loadWave(waveParams[wave][1] + mSettings.waveNote, waveParams[wave][0], &waveDataSize, &mWaveData);
                 }
 
                 if (mWaveData != nullptr) {
-                    mWaveMask = (1 << local_10) - 1;
-                    mWaveShift = 0x1e - local_10;
-                    mPhaseIncrementShift = waveParams[wave][2] + mSettings.FIELD_ec;
+                    mWaveMask = (1 << waveDataSize) - 1;
+                    mWaveShift = 0x1e - waveDataSize;
+                    mPhaseIncrementShift = waveParams[wave][2] + mSettings.waveShift;
                 } else {
                     mWave = 0;
                     mPhaseIncrementShift = 0;
@@ -476,7 +474,7 @@ void SqLfo::updateSettings() {
           
             wave = mSettings.wave - 0x4b;
             if (wave < 8) {
-//                mWaveData = envShapingCurves[wave]; TODO
+                mWaveData = reinterpret_cast<uint8_t*>(envShapingCurves[wave]); // TODO remove cast
             } else {
                 mWave = 0;
             }

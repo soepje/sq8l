@@ -6,7 +6,7 @@
 #include "Doc.h"
 
 struct Sq_lfo_settings {
-    std::function<void(int, unsigned int, unsigned int*, unsigned char**)> /* FIELD_a8 */ loadWave;
+    std::function<void(int32_t note, uint32_t wave, uint32_t* waveDataSize, uint8_t** waveData)> /* FIELD_a8 */ loadWave;
 
     int /* FIELD_b0 */ frequency; // frequency
     int /* FIELD_b4 */ humanize; // humanize
@@ -25,8 +25,9 @@ struct Sq_lfo_settings {
 
     bool /* FIELD_e0 */ twinMode; // twin mode
     int /* FIELD_e4 */ smoothness; // smoothness of LFO output
-    // TODO FIELD_e8
-    int /* FIELD_ec */ FIELD_ec;
+
+    int /* FIELD_e8 */ waveNote;
+    int /* FIELD_ec */ waveShift;
 };
 
 // size 0xf0
