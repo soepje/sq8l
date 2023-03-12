@@ -382,7 +382,7 @@ void /* FUN_004625d4 */ Synth::triggerVoice2(int voiceIndex, int voiceGroup, cha
                 lfo->mSettings.humanize = lfoSettings.humanize;
                 lfo->mSettings.wave = lfoSettings.wave;
                 lfo->mSettings.startAmplitude = lfoSettings.startAmplitude;
-                lfo->mSettings.fadingSpeed = lfoSettings.fading & 0x3f;
+                lfo->mSettings.delay = lfoSettings.fading & 0x3f;
                 lfo->mSettings.finalAmplitude = lfoSettings.finalAmplitude;
                 lfo->mSettings.delayMode = (lfoSettings.fading >> 6) & 1;
                 lfo->mSettings.reverse = (lfoSettings.playMode >> 4) & 1;
@@ -998,7 +998,7 @@ void /* FUN_00463890 */ Synth::updateState(SynthVoice* voice) {
             lfoSettings->humanize = synthLfoSettings.humanize;
             lfoSettings->wave = synthLfoSettings.wave;
             lfoSettings->startAmplitude = synthLfoSettings.startAmplitude;
-            lfoSettings->fadingSpeed = synthLfoSettings.fading & 0x3f;
+            lfoSettings->delay = synthLfoSettings.fading & 0x3f;
             lfoSettings->finalAmplitude = synthLfoSettings.finalAmplitude;
             lfoSettings->delayMode = (synthLfoSettings.fading >> 6) & 0x1;
             lfoSettings->reverse = (synthLfoSettings.playMode >> 4) & 0x1;

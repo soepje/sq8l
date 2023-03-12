@@ -116,10 +116,6 @@ void AudioPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
 
         float left = 0.0, right = 0.0;
 
-        // TODO fix panning in synth
-//        synth.mSettings->ampSettings.stereoPanning = 32;
-//synth.mSettings->restartVoice = 1;
-
         synth.getSamples(true, &left, 1, &right);
 
         leftChannelData[i] = left;
