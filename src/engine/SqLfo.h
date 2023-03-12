@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <cstdint>
 
 #include "Doc.h"
 
@@ -38,46 +39,46 @@ private:
     int /* FIELD_10 */ mPreviousSample;
     int /* FIELD_14 */ mPreviousSampleMix;
     int /* FIELD_18 */ mCurrentSampleMix;
-    int /* FIELD_1c */ mCounter;
-   
-    int /* FIELD_20 */ mCounterIncrement;
-    int /* FIELD_24 */ mWaveOffsets[2];
+
+    int /* FIELD_1c */ mPhase;
+    int /* FIELD_20 */ mPhaseIncrement;
+    int /* FIELD_24 */ mPhaseOffsets[2];
     int /* FIELD_2c */ FIELD_2c;
 
     int /* FIELD_30 */ mTwinMode;
     int /* FIELD_34 */ mFrequency;
     int /* FIELD_38 */ mFrequencyHumanization;
     bool /* FIELD_3c */ mReverse;
-
     bool /* FIELD_40 */ mOneShot;
+
     int /* FIELD_44 */ mStartAmplitude;
     int /* FIELD_48 */ mFinalAmplitude;
-    int /* FIELD_4c */ mFadingSpeed;
-
-    int /* FIELD_50 */ mSmootherFading;
+    int /* FIELD_4c */ mFadingSpeed; // TODO change fading stuff to delay
+    int /* FIELD_50 */ mDelayMode;
     int /* FIELD_54 */ mAmplitude;
     int /* FIELD_58 */ mFinalAmplitude2;
     int /* FIELD_5c */ mFading;
+    int /* FIELD_60 */ mFadingCounter;
 
-    int /* FIELD_60 */ FIELD_60;
     int /* FIELD_64 */ mAmplitudeModulation;
+
     int /* FIELD_68 */ mWave;
-    char* /* FIELD_6c */ mWaveData;
+    uint8_t* /* FIELD_6c */ mWaveData;
+    int /* FIELD_70 */ mWaveMask;
+    int /* FIELD_74 */ mWaveShift;
 
-    int /* FIELD_70 */ FIELD_70;
-    int /* FIELD_74 */ FIELD_74;
     int /* FIELD_78 */ mHumanize;
-    int /* FIELD_7c */ FIELD_7c;
-
+    int /* FIELD_7c */ mHumanizationIndex;
     int /* FIELD_80 */ mHumanization;
     int /* FIELD_84 */ mHumanizationFactor;
+
     int /* FIELD_88 */ FIELD_88; // some internal state
     int /* FIELD_8c */ FIELD_8c; // increment for internal state
 
     char /* FIELD_90 */ mAmplitudeFactor;
     char /* FIELD_90 */ FIELD_91;
     float /* FIELD_94 */ mSampleRate;
-    float /* FIELD_98 */ mFadingFactor;
+    float /* FIELD_98 */ mFadingFactor; // not really a fading factor but more of a ratio of internal clock to sample rate
     float /* FIELD_9c */ FIELD_9c;
 
     float /* FIELD_a0 */ mFrequencyFactor;
@@ -88,16 +89,15 @@ public:
 
 private:
     void /* FUN_0045d1a8 */ init();
-    int /* FUN_0045d110 */ getCounterIncrement(int frequency);
-    void /* FUN_0045d218 */ setDelayMode(bool x);
+    int /* FUN_0045d110 */ getPhaseIncrement(int frequency);
+    void /* FUN_0045d218 */ setDelayMode(bool smooth);
     void /* FUN_0045d25c */ setOutputSmoothness(int x);
     void /* FUN_0045d3e0 */ updateSettings();
-    int /* FUN_0045d824 */ calculateSample();
+    int /* FUN_0045d824 */ updateState();
 
 public:
     /* FUN_0045cf9c */ SqLfo(float sampleRate);
     void /* FUN_0045d020 */ setSampleRate(float sampleRate);
-    void /* FUN_0045d2a4 */ FUN_0045d2a4(int x, bool resetCounter);
+    void /* FUN_0045d2a4 */ reset(int phase, bool resetPhase);
     int /* FUN_0045db2c */ nextSample();
 };
-

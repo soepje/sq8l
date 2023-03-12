@@ -388,7 +388,7 @@ void /* FUN_004625d4 */ Synth::triggerVoice2(int voiceIndex, int voiceGroup, cha
                 lfo->mSettings.reverse = (lfoSettings.playMode >> 4) & 1;
                 lfo->mSettings.oneShot = (lfoSettings.playMode >> 5) & 1;
                 lfo->mSettings.smoothness = (lfoSettings.smoothness & 0x3f) * 4;
-                lfo->FUN_0045d2a4(local_20 + iVar6, resetCounter);
+                lfo->reset(local_20 + iVar6, resetCounter);
             }
 
             for (int i = 0; i < 4; i++) {

@@ -108,6 +108,9 @@ void AudioPluginAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer,
                 synth.triggerNote(message.getChannel(), message.getNoteNumber(), message.getVelocity());
             } else if (message.isNoteOff()) {
                 synth.triggerNote(message.getChannel(), message.getNoteNumber(), 0);
+            } else if (message.isProgramChange()) {
+                setCurrentProgram(message.getProgramChangeNumber());
+                updateSettings();
             }
         }
 
