@@ -8,6 +8,7 @@ files = [
     ('images/programbank.bin', 'programBank'),
     ('images/toggleButton.gif', 'toggleButton'),
     ('images/toggleButtonLed.gif', 'toggleButtonLed'),
+    ('res/waverom.bin', 'waverom'),
 ]
 
 with open('src/data/Data.h', 'w') as f:

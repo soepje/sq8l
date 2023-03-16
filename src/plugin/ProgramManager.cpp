@@ -59,7 +59,7 @@ const short modulationSourceMapping[16] = {
 int8_t fromTwosComplement(uint8_t i) {
     bool negative = (i & 64) > 0;
     if (negative) {
-        return (int8_t) (-(~i & 63) + 1);
+        return (int8_t) -(((i & 63) ^ 63) + 1);
     }
     return (int8_t) (i & 63);
 }
@@ -114,6 +114,8 @@ juce::ValueTree ProgramManager::loadSysexProgramData(std::vector<uint8_t> data) 
         vt.appendChild(createParam(osc + ".MOD2.SEL",modulationSourceMapping[oscData[2] >> 4] + 1), nullptr);
         vt.appendChild(createParam(osc + ".MOD1.AMT", fromTwosComplement(oscData[3] >> 1)), nullptr);
         vt.appendChild(createParam(osc + ".MOD2.AMT", fromTwosComplement(oscData[4] >> 1)), nullptr);
+
+        vt.appendChild(createParam(osc + ".WAVE", oscData[5]), nullptr);
 
         vt.appendChild(createParam(dca + ".OUTPUT", fromTwosComplement((oscData[6] >> 7) & 1)), nullptr);
         vt.appendChild(createParam(dca + ".LEVEL", fromTwosComplement((oscData[6] >> 1) & 63)), nullptr);

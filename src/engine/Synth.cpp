@@ -1084,7 +1084,7 @@ void /* FUN_00463890 */ Synth::updateState(SynthVoice* voice) {
 
         VoiceSettings* voiceSettings = mDoc->getVoiceSettings(voice->voiceIndex);
         voiceSettings->am_enabled = synthSettings->am;
-        voiceSettings->sync_enabled = synthSettings->sync < 1;
+        voiceSettings->sync_enabled = synthSettings->sync == 1;
         voiceSettings->am_bug_enabled = synthSettings->emuOptions & 1;
         voiceSettings->field_70 = synthSettings->field_196 & 1;
 
@@ -1103,14 +1103,14 @@ void /* FUN_00463890 */ Synth::updateState(SynthVoice* voice) {
 
         if (dcBlock == 0) {
             if (synthSettings->sync < 1) {
-                voiceSettings->field_7c = false;
+                voiceSettings->dcBlock = false;
             } else {
-                voiceSettings->field_7c = true;
+                voiceSettings->dcBlock = true;
             }
         } else if (dcBlock == 1) {
-            voiceSettings->field_7c = true;
+            voiceSettings->dcBlock = true;
         } else {
-            voiceSettings->field_7c = false;
+            voiceSettings->dcBlock = false;
         }
 
         for (int i = 0; i < 3; i++) {
@@ -1131,7 +1131,7 @@ void /* FUN_00463890 */ Synth::updateState(SynthVoice* voice) {
             oscSettings->semi = synthOscSettings->octave * 12 + synthOscSettings->semi;
             oscSettings->fine = synthOscSettings->fine;
 
-            oscSettings->field_14 = pitchModulation + modulation1 * modulationAmount1 + modulation2 * modulationAmount2;
+            oscSettings->pitchModulation = pitchModulation + modulation1 * modulationAmount1 + modulation2 * modulationAmount2;
             oscSettings->level = (modulation3 * modulationAmount3 + modulation4 * modulationAmount4) * 4 + ((int) synthOscSettings->level) * 512;
         }
 

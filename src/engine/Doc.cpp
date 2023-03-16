@@ -5,7 +5,8 @@
 #include "Doc.h"
 #include "Data.h"
 #include "SoundLib.h"
-#include "PackDlt.h"
+
+#include "../data/Data.h"
 
 unsigned int /* FUN_0045b8b4 */ pitchToFrequency(int pitch) {
     while (pitch >= 0x8000) {
@@ -43,23 +44,14 @@ unsigned int /* FUN_0045b8b4 */ pitchToFrequency(int pitch) {
 /* FUN_0045b9e0 */ Doc::Doc(unsigned int numVoices) {
     setNumVoices(numVoices);
 
-    int outputBufferLength;
-
-    mWaves = nullptr;
-
-    PackDlt36 pack = PackDlt36();
-    pack.unpack(docPackedWaves, 0x2b429, &outputBufferLength, &mWaves);
+    mWaves = sq8l::data::waverom;
 
     init();
     setClockRate(38455.85546875);
 }
 
 /* FUN_0045ba78 */ Doc::~Doc() {
-    // TODO fix munmap_chunk(): invalid pointer
 
-//    if (mWaves != nullptr) {
-//        std::free(mWaves);
-//    }
 }
 
 void /* FUN_0045baac */ Doc::init() {
@@ -163,7 +155,7 @@ void /* FUN_0045bcd0 */ Doc::triggerVoice(unsigned voiceIndex, unsigned int note
         voiceSettings->glideNote = note;
 
         for (int i = 0; i < 3; i++) {
-            voiceSettings->oscSettings[i].field_14 = 0;
+            voiceSettings->oscSettings[i].pitchModulation = 0;
         }
     }
 }
@@ -214,12 +206,12 @@ void /* FUN_0045bda4 */ Doc::updateVoiceSettings(unsigned int voiceIndex) {
         voice->field_158 = voiceSettings->field_70;
 
         if (voiceSettings->field_50) {
-            if (voiceSettings->field_7c) {
+            if (voiceSettings->dcBlock) {
                 resetVoiceOutput(voice);
 
-                voice->field_190 = voiceSettings->field_7c;
+                voice->dcBlock = voiceSettings->dcBlock;
             } else {
-                voice->field_190 = 0;
+                voice->dcBlock = false;
             }
         }
 
@@ -315,14 +307,14 @@ void /* FUN_0045bda4 */ Doc::updateVoiceSettings(unsigned int voiceIndex) {
                 osc->field_4 = true;
                 osc->field_14 = pitch;
 
-                pitch += osc_settings->field_14;
+                pitch += osc_settings->pitchModulation;
 
                 if (pitch < 0) {
                     pitch = 0;
                 }
 
                 osc->field_18 = pitch;
-                osc->field_1c = osc_settings->field_14;
+                osc->field_1c = osc_settings->pitchModulation;
                 osc->field_20 = osc_settings->level;
                 osc->field_60 = fun_45c55c(pitch);
 
@@ -556,8 +548,8 @@ void /* FUN_0045c628 */ Doc::updateClockRate() {
 
 void /* FUN_0045c6dc */ Doc::updateSampleRate() {
     float arg = mSampleDuration * 111.123889803846899;
-    float fVar1 = cos(arg);
-    float fVar2 = sin(arg);
+    float fVar1 = std::cos(arg);
+    float fVar2 = std::sin(arg);
     float fVar3 = (fVar2 / 1.70711) + 1.0; // 1/sqrt(2) + 1 = 1.70711
 
     field_206c = ((fVar1 + 1.0) * 0.5) / fVar3;
@@ -609,9 +601,9 @@ float /* FUN_0045c7f4 */ Doc::getSample(unsigned int voiceIndex) {
 
                 if (osc1->field_64) {
                     osc1->field_64 = false;
-                    
+
                     if (osc2->sync_state == 2) {
-                        osc2->sample_index = 0; // hmm
+                        osc2->sample_index = 0;
                     }
 
                     osc1->stopped = osc1->sync_state == 1;
@@ -799,7 +791,8 @@ float /* FUN_0045c7f4 */ Doc::getSample(unsigned int voiceIndex) {
     voice->field_168 = voice->field_164;
     voice->field_164 = (voice->field_164 + field_2068) & 0x3fffffff;
 
-    if (voice->field_190) {
+    // dc offset blocking filter
+    if (voice->dcBlock) {
         float temp = (field_206c * var_12 + 
             field_2070 * voice->field_194 +
             field_2074 * voice->field_198) -

@@ -1,7 +1,7 @@
-set(HEADER_LIST Amp.h Data.h Doc.h FilterBase.h FilterSq.h MidiParser.h ModFoll.h PackDlt.h PackRle.h SimPack.h SoundLib.h SqEnv.h SqLfo.h Synth.h)
+set(HEADER_LIST Amp.h Data.h Doc.h FilterBase.h FilterSq.h MidiParser.h ModFoll.h SoundLib.h SqEnv.h SqLfo.h Synth.h)
 
 
-add_library(engine Amp.cpp Data.cpp Doc.cpp FilterBase.cpp FilterSq.cpp MidiParser.cpp ModFoll.cpp PackDlt.cpp PackRle.cpp SimPack.cpp SoundLib.cpp SqEnv.cpp SqLfo.cpp Synth.cpp ${HEADER_LIST})
+add_library(engine Amp.cpp Data.cpp Doc.cpp FilterBase.cpp FilterSq.cpp MidiParser.cpp ModFoll.cpp SoundLib.cpp SqEnv.cpp SqLfo.cpp Synth.cpp ${HEADER_LIST})
 
 set_target_properties(engine PROPERTIES POSITION_INDEPENDENT_CODE ON)
 

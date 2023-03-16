@@ -43,6 +43,8 @@ struct Voice {
     unsigned int /* field_160 */ field_160;
     unsigned int /* field_164 */ field_164;
     unsigned int /* field_168 */ field_168;
+
+
     float /* field_16c */ field_16c;
     float /* field_170 */ field_170;
     float /* field_174 */ field_174;
@@ -50,11 +52,14 @@ struct Voice {
 
     float /* field_180 */ field_180[4];
 
-    unsigned int /* field_190 */ field_190;
-    unsigned int /* field_194 */ field_194; // output buffer
-    unsigned int /* field_198 */ field_198; // output buffer
-    unsigned int /* field_19c */ field_19c; // output buffer
-    unsigned int /* field_1a0 */ field_1a0; // output buffer
+    bool /* field_190 */ dcBlock;
+
+    // dc offset blocking filter buffer
+    float /* field_194 */ field_194;
+    float /* field_198 */ field_198;
+    float /* field_19c */ field_19c;
+    float /* field_1a0 */ field_1a0;
+
     unsigned int /* field_1a4 */ note;
     unsigned int /* field_1a8 */ glideNote;
     unsigned int /* field_1ac */ smoothingMode; // { 0 = no output ; 1 = emulated ; 2 = fast }
@@ -66,7 +71,7 @@ struct OscSettings {
     unsigned int /* field_8 */ level;
     int /* field_c */ semi;
     int /* field_10 */ fine;
-    int /* field_14 */ field_14; // glide ???
+    int /* field_14 */ pitchModulation;
     int /* field_18 */ field_18;
 };
 
@@ -87,7 +92,7 @@ struct VoiceSettings {
     bool /* field_70 */ field_70;
     unsigned int /* field_74 */ field_74;
     unsigned int /* field_78 */ smoothingMode;
-    bool /* field_7c */ field_7c;
+    bool /* field_7c */ dcBlock;
 };
 
 //Cdoc
@@ -121,11 +126,14 @@ private:
     float /* field_2060 */ field_2060;
     float /* field_2064 */ field_2064;
     unsigned int /* field_2068 */ field_2068;
+
+    // dc offset blocking filter coefficients
     float /* field_206c */ field_206c;
     float /* field_2070 */ field_2070;
     float /* field_2074 */ field_2074;
     float /* field_2078 */ field_2078;
     float /* field_207c */ field_207c;
+
     float /* field_2080 */ field_2080;
     float /* field_2084 */ field_2084;
     float /* field_2088 */ field_2088;
