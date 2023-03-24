@@ -8,7 +8,7 @@
 
 #include "../data/Data.h"
 
-unsigned int /* FUN_0045b8b4 */ pitchToFrequency(int pitch) {
+unsigned int /* FUN_0045b8b4 */ Doc::pitchToFrequency(int pitch) {
     while (pitch >= 0x8000) {
         pitch -= 0xc00;
     }
@@ -46,38 +46,11 @@ unsigned int /* FUN_0045b8b4 */ pitchToFrequency(int pitch) {
 
     mWaves = sq8l::data::waverom;
 
-    init();
     setClockRate(38455.85546875);
 }
 
 /* FUN_0045ba78 */ Doc::~Doc() {
 
-}
-
-void /* FUN_0045baac */ Doc::init() {
-    field_200c[0] = 0.0;
-    field_200c[1] = 0.0;
-    field_2014 = 0.0;
-    field_2018 = 0.001;
-    field_201c = 0.00472441;
-    field_2020 = 0.4;
-    field_2024 = 0.00787402; // 1/127
-    field_2028 = 0.25;
-    field_202c = 0.5;
-    field_2030 = 0.75;
-    field_2034 = 1.5;
-    field_2038 = 1.75;
-    field_203c = 2.0;
-    field_2040 = 2.5;
-    field_2044 = 3.0;
-    field_2048 = 4.0;
-    field_204c = 0.16666667; // 1/6
-    field_2050 = 0.11111111; // 1/9
-    field_2054 = 0.05555556; // 1/18
-    field_2058 = 1.66666663; // 5/3
-    field_205c = 0.30555555; // 11/36
-    field_2060 = 1.83333337; // 11/6
-    field_2064 = 2.36111116; // 85/36
 }
 
 void /* FUN_0045bb54 */ Doc::initVoice(unsigned int voiceIndex) {
@@ -94,9 +67,9 @@ void /* FUN_0045bb54 */ Doc::initVoice(unsigned int voiceIndex) {
 
             osc->field_34 = getVolume(0);
             osc->field_38 = osc->field_34;
-            osc->field_30 = osc->field_34;
+            osc->level = osc->field_34;
 
-            fun_45c5ec(voice, i, osc->field_34);
+            setLevel(voice, i, osc->field_34);
 
             osc->stopped = true;
         }
@@ -124,16 +97,16 @@ void /* FUN_0045bc20 */ Doc::setNumVoices(unsigned int numVoices) {
 void /* FUN_0045bc34 */ Doc::setClockRate(float clockRate) {
     mClockRate = clockRate;
 
-    updateClockRate();
+    updateLevels();
 }
 
 void /* FUN_0045bc4c */ Doc::setSampleRate(float sampleRate) {
     mSampleRate = sampleRate;
     mSampleDuration = 1.0f / mSampleRate;
     field_2068 = floor((mClockRate / mSampleRate) * (2 << 29)); // TODO check floor
-    mField_209c = round(mSampleRate * 0.0975); // TODO check round
+    mTailSamples = round(mSampleRate * 0.0975); // TODO check round
 
-    updateSampleRate();
+    updateDcBlockCoefficients();
 }
 
 void /* FUN_0045bcd0 */ Doc::triggerVoice(unsigned voiceIndex, unsigned int note, int prevVoiceIndex, bool param_5, bool restartOsc) {
@@ -207,7 +180,7 @@ void /* FUN_0045bda4 */ Doc::updateVoiceSettings(unsigned int voiceIndex) {
 
         if (voiceSettings->field_50) {
             if (voiceSettings->dcBlock) {
-                resetVoiceOutput(voice);
+                clearDcBlockBuffer(voice);
 
                 voice->dcBlock = voiceSettings->dcBlock;
             } else {
@@ -256,7 +229,7 @@ void /* FUN_0045bda4 */ Doc::updateVoiceSettings(unsigned int voiceIndex) {
                 }
 
                 bool local_24 = voiceSettings->restartOsc;
-                unsigned int local_28;
+                unsigned int local_28; // osc play mode
 
                 // im not too sure about this next part
                 if (update_osc_params) {
@@ -316,7 +289,7 @@ void /* FUN_0045bda4 */ Doc::updateVoiceSettings(unsigned int voiceIndex) {
                 osc->field_18 = pitch;
                 osc->field_1c = osc_settings->pitchModulation;
                 osc->field_20 = osc_settings->level;
-                osc->field_60 = fun_45c55c(pitch);
+                osc->field_60 = getFrequency(pitch);
 
                 if (local_24) {
                     osc->sample_index = 0;
@@ -354,20 +327,20 @@ void /* FUN_0045bda4 */ Doc::updateVoiceSettings(unsigned int voiceIndex) {
                 
                 if (!voiceSettings->field_48) {
                     if (voice->smoothingMode == 1) {
-                        fun_45c5ec(voice, i, osc->field_34);
+                        setLevel(voice, i, osc->field_34);
 
                         osc->field_38 = osc->field_34;
                         osc->field_34 = volume;
                     } else if (voice->smoothingMode == 2) {
-                        fun_45c5ec(voice, i, volume);
+                        setLevel(voice, i, volume);
 
                         osc->field_38 = osc->field_34;
                         osc->field_34 = volume;
                     } else {
-                        fun_45c5ec(voice, i, volume);
+                        setLevel(voice, i, volume);
                     }
                 } else {
-                    fun_45c5ec(voice, i, volume);
+                    setLevel(voice, i, volume);
 
                     osc->field_34 = volume;
                     osc->field_38 = volume;
@@ -431,7 +404,7 @@ void /* FUN_0045c378 */ Doc::updateSmoothingMode(unsigned int voiceIndex) {
 
                 if (!osc->stopped) {
                     if (voice->smoothingMode == 1) {
-                        fun_45c5ec(voice, i, (osc->field_34 + osc->field_38) * 0.5);
+                        setLevel(voice, i, (osc->field_34 + osc->field_38) * 0.5);
                     } else if (voice->smoothingMode == 2) {
                         float local_10 = (osc->field_34 * 3.0 - osc->field_38) * 0.0;
 
@@ -441,7 +414,7 @@ void /* FUN_0045c378 */ Doc::updateSmoothingMode(unsigned int voiceIndex) {
                             local_10 = 1.0;
                         }
 
-                        fun_45c5ec(voice, i, local_10);
+                        setLevel(voice, i, local_10);
                     }
                 }
             }
@@ -453,7 +426,7 @@ void /* FUN_0045c460 */ Doc::setGlideStart(unsigned int voiceIndex, unsigned int
     setGlideStart(voiceIndex, note, false);
 }
 
-void /* FUN_0045c470 */ fun_45c470(int* semi, unsigned char* wsr) {
+void /* FUN_0045c470 */ Doc::fun_45c470(int* semi, unsigned char* wsr) {
     *semi = *semi + 12;
 
     if (*semi < 12) {
@@ -471,7 +444,7 @@ void /* FUN_0045c470 */ fun_45c470(int* semi, unsigned char* wsr) {
     }
 }
 
-void /* FUN_0045c49c */ fun_45c49c(unsigned int note, unsigned int glide_note, int* pitch, unsigned char* wsr, unsigned char* page, unsigned int wave, int fine, int semi) {
+void /* FUN_0045c49c */ Doc::fun_45c49c(unsigned int note, unsigned int glide_note, int* pitch, unsigned char* wsr, unsigned char* page, unsigned int wave, int fine, int semi) {
     unsigned int /* local_10 */ fine_out;
     int /* local_c */ semi_out;
 
@@ -497,14 +470,14 @@ void /* FUN_0045c4f8 */ Doc::getWaveData(int note, unsigned int wave, unsigned i
     *waveData = &mWaves[((x * 65536) + page * 256) & 0x3ffff];
 }
 
-unsigned int /* FUN_0045c55c */ fun_45c55c(int param_2) {
-    return pitchToFrequency(param_2 - 0x10);
+unsigned int /* FUN_0045c55c */ Doc::getFrequency(int pitchIndex) {
+    return pitchToFrequency(pitchIndex - 16);
 }
 
-float /* FUN_0045c568 */ Doc::getVolume(unsigned int volumeIndex) {
+float /* FUN_0045c568 */ Doc::getVolume(int volumeIndex) {
     float volume;
     
-    if (volumeIndex == 0) {
+    if (volumeIndex < 0) {
         volume = docVolumeCurve[0];
     } else {
         unsigned int x = volumeIndex >> 7;
@@ -529,41 +502,42 @@ float /* FUN_0045c568 */ Doc::getVolume(unsigned int volumeIndex) {
     return volume;
 }
 
-void /* FUN_0045c5ec */ Doc::fun_45c5ec(Voice* voice, unsigned int oscIndex, float param_4) {
+void /* FUN_0045c5ec */ Doc::setLevel(Voice* voice, unsigned int oscIndex, float level) {
     Osc* osc = &voice->oscillators[oscIndex];
 
     if (oscIndex == 1 && voice->am_enabled) {
-        osc->field_2c = param_4 * field_208c;
+        osc->targetLevel = level * mLevelAmInv;
     } else {
-        osc->field_2c = param_4 * field_2088;
+        osc->targetLevel = level * mLevelAm;
     }
 }
 
-void /* FUN_0045c628 */ Doc::updateClockRate() {
-    field_2080 = pow(0.01, 1.0 / (mClockRate * 0.002953125 + 1.0));
-    field_2088 = 1 - field_2080;
-    field_2084 = pow(0.01, 1.0 / (mClockRate * 0.0002220703125 + 1.0));
-    field_208c = 1 - field_2084;
+
+void /* FUN_0045c628 */ Doc::updateLevels() {
+    mLevel = pow(0.01, 1.0 / (mClockRate * 0.002 + 1.0));
+    mLevelAm = 1 - mLevel;
+    mLevelInv = pow(0.01, 1.0 / (mClockRate * 0.0002 + 1.0));
+    mLevelAmInv = 1 - mLevelInv;
 }
 
-void /* FUN_0045c6dc */ Doc::updateSampleRate() {
-    float arg = mSampleDuration * 111.123889803846899;
-    float fVar1 = std::cos(arg);
-    float fVar2 = std::sin(arg);
-    float fVar3 = (fVar2 / 1.70711) + 1.0; // 1/sqrt(2) + 1 = 1.70711
+void /* FUN_0045c6dc */ Doc::updateDcBlockCoefficients() {
+    float theta = mSampleDuration * 30.0f * M_PI;
+    float a = std::cos(theta);
+    float b = std::sin(theta) / 1.41422f;
+    float c = b + 1.0f;
 
-    field_206c = ((fVar1 + 1.0) * 0.5) / fVar3;
-    field_2070 = -(fVar1 + 1.0) / fVar3;
-    field_2074 = ((fVar1 + 1.0) * 0.5) / fVar3;
-    field_2078 = -(fVar1 * 2.0) / fVar3;
-    field_207c = (1.0 - (fVar2 / 1.0)) / fVar3;
+    mDcBlockCoefficients[0] = ((a + 1.0f) * 0.5f) / c;
+    mDcBlockCoefficients[1] = -(a + 1.0f) / c;
+    mDcBlockCoefficients[2] = ((a + 1.0f) * 0.5f) / c;
+    mDcBlockCoefficients[3] = -(a * 2.0f) / c;
+    mDcBlockCoefficients[4] = (1.0f - b) / c;
 }
 
-void /* FUN_0045c7bc */ Doc::resetVoiceOutput(Voice* voice) {
-    voice->field_194 = 0;
-    voice->field_198 = 0;
-    voice->field_19c = 0;
-    voice->field_1a0 = 0;
+void /* FUN_0045c7bc */ Doc::clearDcBlockBuffer(Voice* voice) {
+    voice->dcBlockBuf[0] = 0;
+    voice->dcBlockBuf[1] = 0;
+    voice->dcBlockBuf[2] = 0;
+    voice->dcBlockBuf[3] = 0;
 }
 
 VoiceSettings* /* FUN_0045c7e0 */ Doc::getVoiceSettings(unsigned int voiceIndex) {
@@ -591,7 +565,6 @@ float /* FUN_0045c7f4 */ Doc::getSample(unsigned int voiceIndex) {
         Osc* osc3 = &voice->oscillators[2];
 
         if (!osc1->stopped) {
-            // TODO check conversion
             unsigned char sample = mWaves[(osc1->sample_index >> (osc1->field_58 & 0x1f)) + (osc1->field_44 & 0x3ffff)];
         
             if (sample == 0) {
@@ -673,27 +646,26 @@ float /* FUN_0045c7f4 */ Doc::getSample(unsigned int voiceIndex) {
 
         float var_12;
         if (voice->am_enabled) {
-            var_12 = sample_osc2 * field_2024 * osc2->field_30;
-            var_12 += sample_osc3 * field_2024 * osc3->field_30;
+            var_12 = sample_osc2 * field_2024 * osc2->level;
+            var_12 += sample_osc3 * field_2024 * osc3->level;
 
-            osc2->field_30 = field_2084 * osc2->field_30 + 
-                (sample_osc2 * field_201c + field_2020) * field_208c;
-            osc3->field_30 = field_2080 * osc3->field_30 + osc3->field_2c;
+            osc2->level = mLevelInv * osc2->level + (sample_osc2 * field_201c + field_2020) * mLevelAmInv;
+            osc3->level = mLevel * osc3->level + osc3->targetLevel;
         } else {
-            var_12 = (osc1->field_0) ? sample_osc1 * field_2024 * osc1->field_30 : 0.0;
-            var_12 += sample_osc2 * field_2024 * osc2->field_30;
-            var_12 += sample_osc3 * field_2024 * osc3->field_30;
+            var_12 = (osc1->field_0) ? sample_osc1 * field_2024 * osc1->level : 0.0;
+            var_12 += sample_osc2 * field_2024 * osc2->level;
+            var_12 += sample_osc3 * field_2024 * osc3->level;
 
-            osc1->field_30 = field_2080 * osc1->field_30 + osc1->field_2c;
-            osc2->field_30 = field_2080 * osc2->field_30 + osc2->field_2c;
-            osc3->field_30 = field_2080 * osc3->field_30 + osc3->field_2c;
+            osc1->level = mLevel * osc1->level + osc1->targetLevel;
+            osc2->level = mLevel * osc2->level + osc2->targetLevel;
+            osc3->level = mLevel * osc3->level + osc3->targetLevel;
         }
 
-        // is this the dca smoothing part ???
+        // some random filter
         voice->field_16c = voice->field_170;
         voice->field_170 = voice->field_174;
         voice->field_174 = voice->field_178;
-        voice->field_178 = var_12 + field_200c[voice->field_15c]; // hmm
+        voice->field_178 = var_12 + field_200c[voice->field_15c];
 
         voice->field_15c = (voice->field_15c + 1) % 2;
 
@@ -781,10 +753,10 @@ float /* FUN_0045c7f4 */ Doc::getSample(unsigned int voiceIndex) {
     float var_2 = voice->field_164 * field_2014;
     float var_3 = var_2;
 
-    float var_12 = voice->field_16c;
+    float output = voice->field_16c;
 
     for (int i = 0; i < voice->field_160; i++) {
-        var_12 += voice->field_180[i] * var_3;
+        output += voice->field_180[i] * var_3;
         var_3 *= var_2;
     }
 
@@ -793,17 +765,23 @@ float /* FUN_0045c7f4 */ Doc::getSample(unsigned int voiceIndex) {
 
     // dc offset blocking filter
     if (voice->dcBlock) {
-        float temp = (field_206c * var_12 + 
-            field_2070 * voice->field_194 +
-            field_2074 * voice->field_198) -
-            field_2078 * voice->field_19c - 
-            field_207c * voice->field_1a0;
+        float filteredOutput = ((mDcBlockCoefficients[0] * output +
+                                 mDcBlockCoefficients[1] * voice->dcBlockBuf[0] +
+                                 mDcBlockCoefficients[2] * voice->dcBlockBuf[1]) -
+                                (mDcBlockCoefficients[3] * voice->dcBlockBuf[2])) -
+                               (mDcBlockCoefficients[4] * voice->dcBlockBuf[3]);
 
-        voice->field_198 = voice->field_194;
-        voice->field_194 = var_12;
-        voice->field_1a0 = voice->field_19c;
-        voice->field_19c = temp;
+        voice->dcBlockBuf[1] = voice->dcBlockBuf[0];
+        voice->dcBlockBuf[3] = voice->dcBlockBuf[2];
+        voice->dcBlockBuf[0] = output;
+        voice->dcBlockBuf[2] = filteredOutput;
+
+        mOutput = output;
+
+        return filteredOutput;
     }
 
-    return var_12;
+    mOutput = output;
+
+    return output;
 }

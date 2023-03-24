@@ -1269,7 +1269,7 @@ bool /* FUN_00464410 */ Synth::getVoiceOutput(SynthVoice* voice, float output[2]
     }
 
     if (!voice->envs[3]->isRunning()) {
-        if (voice->amp->smoothingCounter() == -mDoc->field_209c()) {
+        if (voice->amp->smoothingCounter() == -mDoc->getTailSamples()) {
             return true;
         }
     }
