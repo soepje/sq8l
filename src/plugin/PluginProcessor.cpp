@@ -258,6 +258,7 @@ void AudioPluginAudioProcessor::updateSettings() {
         s->times[0] = static_cast<char>(parameters.getRawParameterValue(env + ".T1")->load());
         s->times[1] = static_cast<char>(parameters.getRawParameterValue(env + ".T2")->load());
         s->times[2] = static_cast<char>(parameters.getRawParameterValue(env + ".T3")->load());
+        s->times[3] = static_cast<char>(parameters.getRawParameterValue(env + ".T4")->load());
 
         s->timeScaling = static_cast<char>(parameters.getRawParameterValue(env + ".TK")->load());
 

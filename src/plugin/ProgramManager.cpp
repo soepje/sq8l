@@ -144,7 +144,7 @@ juce::ValueTree ProgramManager::loadSysexProgramData(std::vector<uint8_t> data) 
             -63, -56, -48, -40, -32, -24, -16, -8, 0, 8, 16, 24, 32, 40, 48, 63
     };
 
-    vt.appendChild(createParam("DCA4.AMT", fromTwosComplement(data[88] >> 1)), nullptr);
+    vt.appendChild(createParam("DCA4.AMT", data[88] >> 1), nullptr);
     vt.appendChild(createParam("DCA4.PAN", panningMapping[(data[100] >> 4) & 15]), nullptr);
     vt.appendChild(createParam("DCA4.PMOD.SEL", modulationSourceMapping[data[100] & 15] + 1), nullptr);
     vt.appendChild(createParam("DCA4.PMOD.AMT", fromTwosComplement(data[101] & 127)), nullptr);

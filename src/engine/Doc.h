@@ -165,7 +165,7 @@ public:
     void setGlideStart(unsigned int voiceIndex, unsigned int note);
 
     void fun_45c470(int* semi, unsigned char* wsr);
-    void fun_45c49c(unsigned int note, unsigned int glide_note, int* pitch, unsigned char* wsr, unsigned char* page, unsigned int wave, int fine, int semi);
+    void getWaveParameters(unsigned int note, unsigned int glide_note, int* pitch, unsigned char* wsr, unsigned char* page, unsigned int wave, int fine, int semi);
     void getWaveData(int note, unsigned int wave, unsigned int *waveDataSize, unsigned char **waveData);
 
     unsigned int getFrequency(int pitchIndex);

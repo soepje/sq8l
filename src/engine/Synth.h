@@ -290,7 +290,7 @@ private:
     int /* FIELD_fe8 */ mGlobalMuffle = 0; // 0 = no override, 1 = muffle off, 2 = muffle on
     int /* FIELD_fec */ mGlobalDca13Smoothing = 1; // 0 = no override, 1 = emu, 2 = hard
     int /* FIELD_ff0 */ mGlobalDca4Smoothing = 1; // 0 = no override, 1 = emu, 2 = hard
-    int /* FIELD_ff4 */ mGlobalDcBlockingFilter; // 0 = no override, 1 = smart, 2 = on, 3 = off
+    int /* FIELD_ff4 */ mGlobalDcBlockingFilter = 0; // 0 = no override, 1 = smart, 2 = on, 3 = off
 
     // mField_ff8 is an editBuf
     // mField_ffc is a midiparser

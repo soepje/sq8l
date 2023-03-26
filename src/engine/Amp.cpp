@@ -169,7 +169,7 @@ void /* FUN_0045e680 */ Amp::setParameters(unsigned int volumeIndex, int panning
 void /* FUN_0045e69c */ Amp::setParameters(unsigned int volume, int panning, bool reset, float gain) {
     setParameterValues(volume, panning, reset);
 
-    float totalGain = mSaturation.gain * 1.61378f * gain;
+    float totalGain = mSaturation.gain * 1.22756f * gain;
 
     if (!reset && mSmoothingCounter < 0) {
         mVolume[0] = mTargetVolume[0];
@@ -186,16 +186,8 @@ void /* FUN_0045e69c */ Amp::setParameters(unsigned int volume, int panning, boo
     if (mTargetVolume[1] < 1e-06) {
         mTargetVolume[1] = 1e-06;
     }
-    
+
     if (reset) {
-        mVolumeIncrement[0] = mTargetVolume[0] - mVolume[0] * mSmoothingSamplesInverse;
-        mVolumeIncrement[1] = mTargetVolume[1] - mVolume[1] * mSmoothingSamplesInverse;
-
-        mVolume[0] *= mVolumeIncrement[0];
-        mVolume[1] *= mVolumeIncrement[1];
-
-        mSmoothingCounter = mSmoothingSamples;
-    } else {
         mVolume[0] = mTargetVolume[0];
         mVolume[1] = mTargetVolume[1];
 
@@ -203,6 +195,14 @@ void /* FUN_0045e69c */ Amp::setParameters(unsigned int volume, int panning, boo
         mVolumeIncrement[1] = 0;
 
         mSmoothingCounter = 0;
+    } else {
+        mVolumeIncrement[0] = (mTargetVolume[0] - mVolume[0]) * mSmoothingSamplesInverse;
+        mVolumeIncrement[1] = (mTargetVolume[1] - mVolume[1]) * mSmoothingSamplesInverse;
+
+        mVolume[0] += mVolumeIncrement[0];
+        mVolume[1] += mVolumeIncrement[1];
+
+        mSmoothingCounter = mSmoothingSamples;
     }
 
     mTotalGain = totalGain;
@@ -232,7 +232,7 @@ void /* FUN_0045e7f8 */ Amp::setSmoothing(float seconds) {
     } else {
         mSmoothingDuration = seconds;
 
-        setSmoothingSamples((int) roundf(seconds * mSampleRate));
+        setSmoothingSamples(static_cast<int>(std::floor(mSampleRate * (double) seconds)));
     }
 }
 

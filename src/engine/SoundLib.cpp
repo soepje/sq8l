@@ -1,7 +1,7 @@
 #include "SoundLib.h"
 #include "Data.h"
 
-void /* FUN_00455f0c */ getWaveParameters(unsigned int wave, int note, unsigned char* page, unsigned int* fine, int* semi, unsigned char* wsr) {
+void /* FUN_00455f0c */ SoundLib::getWaveParameters(unsigned int wave, int note, unsigned char* page, unsigned int* fine, int* semi, unsigned char* wsr) {
     if (wave < 0x4b) {
         if (note < 0) {
             note = 0;
@@ -13,8 +13,8 @@ void /* FUN_00455f0c */ getWaveParameters(unsigned int wave, int note, unsigned 
 
         *page = docWaveParameters[index][0];
         *wsr = docWaveParameters[index][1];
-        *semi = docWaveParameters[index][2];
-        *fine = docWaveParameters[index][3];
+        *semi = (int) static_cast<char>(docWaveParameters[index][2]);
+        *fine = (unsigned int) docWaveParameters[index][3];
     } else {
         *page = 0;
         *wsr = 0;
@@ -23,7 +23,7 @@ void /* FUN_00455f0c */ getWaveParameters(unsigned int wave, int note, unsigned 
     }
 }
 
-void /* FUN_00455f84 */ getWaveParameters(unsigned int wave, int note, unsigned char *page, unsigned char *wsr) {
+void /* FUN_00455f84 */ SoundLib::getWaveParameters(unsigned int wave, int note, unsigned char *page, unsigned char *wsr) {
     if (wave < 0x4b) {
         if (note < 0) {
             note = 0;

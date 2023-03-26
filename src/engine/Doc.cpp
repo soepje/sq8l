@@ -222,8 +222,8 @@ void /* FUN_0045bda4 */ Doc::updateVoiceSettings(unsigned int voiceIndex) {
                     osc->semi = osc_settings->semi;
                     osc->fine = osc_settings->fine;
 
-                    fun_45c49c(voice->note, voice->glideNote, &pitch, &wsr, &page,
-                               osc_settings->wave, osc_settings->fine, osc_settings->semi);
+                    getWaveParameters(voice->note, voice->glideNote, &pitch, &wsr, &page,
+                                      osc_settings->wave, osc_settings->fine, osc_settings->semi);
                 } else {
                     pitch = osc->field_14;
                 }
@@ -444,11 +444,11 @@ void /* FUN_0045c470 */ Doc::fun_45c470(int* semi, unsigned char* wsr) {
     }
 }
 
-void /* FUN_0045c49c */ Doc::fun_45c49c(unsigned int note, unsigned int glide_note, int* pitch, unsigned char* wsr, unsigned char* page, unsigned int wave, int fine, int semi) {
+void /* FUN_0045c49c */ Doc::getWaveParameters(unsigned int note, unsigned int glide_note, int* pitch, unsigned char* wsr, unsigned char* page, unsigned int wave, int fine, int semi) {
     unsigned int /* local_10 */ fine_out;
     int /* local_c */ semi_out;
 
-    getWaveParameters(wave, note + semi, page, &fine_out, &semi_out, wsr);
+    SoundLib::getWaveParameters(wave, note + semi, page, &fine_out, &semi_out, wsr);
 
     semi += semi_out;
 
@@ -462,7 +462,7 @@ void /* FUN_0045c4f8 */ Doc::getWaveData(int note, unsigned int wave, unsigned i
     unsigned char page;
     unsigned char wsr;
 
-    getWaveParameters(wave, note, &page, &wsr);
+    SoundLib::getWaveParameters(wave, note, &page, &wsr);
 
     unsigned char x = ((wsr & 0x40) >> 5) | (wsr >> 7);
 
@@ -776,7 +776,7 @@ float /* FUN_0045c7f4 */ Doc::getSample(unsigned int voiceIndex) {
         voice->dcBlockBuf[0] = output;
         voice->dcBlockBuf[2] = filteredOutput;
 
-        mOutput = output;
+        mOutput = filteredOutput;
 
         return filteredOutput;
     }

@@ -1178,12 +1178,10 @@ void /* FUN_00463890 */ Synth::updateState(SynthVoice* voice) {
         int ampVolume = round(((x / 64) * (iVar15 + (amplitudeModulation2 / 64)) * (1.0 / 127)));
         int ampPanning = synthSettings->ampSettings.stereoPanning + voice->field_dc + (panningModulation / 128);
 
-//        ampVolume = voice->envs[3]->getOutput(); // TODO remove, for debugging
-
         int /* DAT_4C2550 */ DAT_4C2550[2] = {0, 0};
 
         voice->amp->setVolumeResponse(DAT_4C2550[voice->dca4Smoothing]);
-        voice->amp->setParameters(ampVolume, ampPanning, false); // TODO check 4th param, voice->filters[0]->field_0x14);
+        voice->amp->setParameters(ampVolume, ampPanning, false, voice->filters[0]->field_0x14);
 
         if (mField_f6c <= voice->field_4 || voice->voiceIndex == mField_f68) {
             mField_f6c = voice->field_4;

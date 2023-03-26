@@ -36,7 +36,7 @@ private:
     bool /* field_63 */ mSustaining;
     bool /* field_64 */ mFinalStep;
     void /* field_68 */ (SqEnv::*mStepFunction)();
-    void /* field_70 */ (SqEnv::*mAdvanceStage)();
+    void /* field_70 */ (SqEnv::*mAdvanceStage)(); // mNextStage
     float /* field_78 */ mSampleRate;
     float /* field_7c */ mStepsPerCentiSecond;
 
