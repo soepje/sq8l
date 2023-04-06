@@ -1159,29 +1159,33 @@ void /* FUN_00463890 */ Synth::updateState(SynthVoice* voice) {
         voice->filters[0]->setCutoffAndResonance(cutoff, synthSettings->filterSettings.resonance, resetFilter);
 
         // Process amp settings
-        // TODO this needs some checking
         voice->amp->setSaturation(synthSettings->ampSettings.saturation);
 
-        int amplitudeModulation = getModulation(voice, synthSettings->ampSettings.amplitudeModulationSource);
-        int amplitudeModulationAmount = synthSettings->ampSettings.amplitudeModulationAmount;
-        int amplitudeModulation2 = amplitudeModulation * amplitudeModulationAmount;
+        int amplitudeModulation = getModulation(voice, synthSettings->ampSettings.amplitudeModulationSource) * 
+            synthSettings->ampSettings.amplitudeModulationAmount;
 
         int panningModulation1 = getModulation(voice, synthSettings->ampSettings.panningModulationSource);
         int panningModulationAmount1 = synthSettings->ampSettings.panningModulationAmount;
         int panningModulation2 = getModulation(voice, 0x18);
         int panningModulation = panningModulation1 * panningModulationAmount1 + panningModulation2 - 64;
 
-        int x = round((float) voice->field_d8 * (float) synthSettings->ampSettings.envelopeAmplitudeModulationAmount * 0.0163809523809523814586);
-        x = (x + getModulation(voice, 0x1b) / 2) * voice->envs[3]->getOutput() * 2;
-        int iVar15 = getModulation(voice, 0x17);
+        int envAmplitudeModulationAmount = static_cast<int>(std::trunc(
+                static_cast<double>(voice->field_d8) *
+                0.0163809523809523814586 *
+                static_cast<double>(synthSettings->ampSettings.envelopeAmplitudeModulationAmount))) +
+                (getModulation(voice, 0x1b) / 2);
 
-        int ampVolume = round(((x / 64) * (iVar15 + (amplitudeModulation2 / 64)) * (1.0 / 127)));
+        int envAmplitudeModulation = envAmplitudeModulationAmount * voice->envs[3]->getOutput() * 2;
+
+        int ampVolume = static_cast<int>(std::trunc(static_cast<double>(envAmplitudeModulation / 64) *
+                (1.0 / 127.0) * static_cast<double>(getModulation(voice, 0x17) + (amplitudeModulation / 64))));
+
         int ampPanning = synthSettings->ampSettings.stereoPanning + voice->field_dc + (panningModulation / 128);
 
         int /* DAT_4C2550 */ DAT_4C2550[2] = {0, 0};
 
         voice->amp->setVolumeResponse(DAT_4C2550[voice->dca4Smoothing]);
-        voice->amp->setParameters(ampVolume, ampPanning, false, voice->filters[0]->field_0x14);
+        voice->amp->setParameters(ampVolume, ampPanning, false, voice->filters[0]->mOutputGain);
 
         if (mField_f6c <= voice->field_4 || voice->voiceIndex == mField_f68) {
             mField_f6c = voice->field_4;

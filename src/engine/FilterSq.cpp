@@ -31,7 +31,7 @@ void initFilterSQTable3();
 
     setField1c(-1);
 
-    field_0x14 = 1.0;
+    mOutputGain = 1.0;
 
     // here the constructor of FilterBase is called, but that is not how c++ works
     // so we call the functionality of that constructor here

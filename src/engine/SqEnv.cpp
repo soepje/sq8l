@@ -46,7 +46,7 @@ void SqEnv::setSampleRate(float sampleRate) {
 }
 
 void SqEnv::setOutputSmoothness(int smoothness) {
-    if (smoothness < 0) {
+    if (smoothness <= 0) {
         this->mSmoothness = 0;
         return;
     }
@@ -152,7 +152,7 @@ void SqEnv::setTargetLevelAndTime(int level, int time) {
         time = 63;    
     }
 
-    int steps = round(envEnvelopeTimes[time] * mStepsPerCentiSecond);
+    int steps = static_cast<int>(std::trunc(static_cast<double>(envEnvelopeTimes[time]) * static_cast<double>(mStepsPerCentiSecond)));
     if (steps < 1) {
         mCounter = 1;
     } else {

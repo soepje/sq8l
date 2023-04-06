@@ -171,7 +171,6 @@ juce::AudioProcessorValueTreeState::ParameterLayout ParameterHelper::createParam
         auto env = "ENV" + std::to_string(i + 1);
         auto g = std::make_unique<juce::AudioProcessorParameterGroup>(env, env, "");
 
-        g->addChild(makeParamInt(env + ".L0", "L0", -63, 63, 63));
         g->addChild(makeParamInt(env + ".L1", "L1", -63, 63, 63));
         g->addChild(makeParamInt(env + ".L2", "L3", -63, 63, 63));
         g->addChild(makeParamInt(env + ".L3", "L3", -63, 63, 63));

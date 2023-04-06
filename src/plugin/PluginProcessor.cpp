@@ -247,7 +247,7 @@ void AudioPluginAudioProcessor::updateSettings() {
 
         Env_settings* s = &synth.mSettings->envSettings[i];
 
-        s->levels[0] = static_cast<char>(parameters.getRawParameterValue(env + ".L0")->load());
+        s->levels[0] = 0;
         s->levels[1] = static_cast<char>(parameters.getRawParameterValue(env + ".L1")->load());
         s->levels[2] = static_cast<char>(parameters.getRawParameterValue(env + ".L2")->load());
         s->levels[3] = static_cast<char>(parameters.getRawParameterValue(env + ".L3")->load());

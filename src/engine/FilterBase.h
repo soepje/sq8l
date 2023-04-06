@@ -9,7 +9,7 @@ public:
     int mField8; // 8h
     int mCutoff; // ch
     int mResonance; //10h
-    float field_0x14; // 14h
+    float mOutputGain; // 14h
 
 public:
     virtual void setSampleRate(float sampleRate); // 00
