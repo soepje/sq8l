@@ -238,7 +238,7 @@ float /* FUN_0045f578 */ FilterSq::process(float sample) {
     field_0x40 = field_0x40 * field_0x50 + field_0x60;
     field_0x18 = field_0x18 * field_0x58 + field_0x68;
 
-    return mBuf4;
+    return mBuf4 * field_0x18;
 }
 
 void /* FUN_0045f61c */ initFilterSQTable1() {

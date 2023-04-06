@@ -85,19 +85,10 @@ void /* FUN_0045ea54 */ initAmpPanningTable() {
     initAmpSaturationTable();
     initAmpPanningTable();
 
-    init();
     updateSmoothing();
     setSmoothing(0.0);
     mSaturation.level = -2;
     setSaturation(0);
-}
-
-void /* FUN_0045e52c */ Amp::init() {
-    mField_34 = 1.4142135381698608; //, possibly sqrt(2)
-    mField_38 = 1.0606601238250732; //, possibly 3 / (2 * sqrt(2))
-    mField_3c = 0.1666666716337204; //, 1.0 / 6.0
-    mField_2c = 1.0;
-    mField_30 = -1.0;
 }
 
 void /* FUN_0045e554 */ Amp::copyState(Amp* other) {
@@ -169,7 +160,7 @@ void /* FUN_0045e680 */ Amp::setParameters(unsigned int volumeIndex, int panning
 void /* FUN_0045e69c */ Amp::setParameters(unsigned int volume, int panning, bool reset, float gain) {
     setParameterValues(volume, panning, reset);
 
-    float totalGain = mSaturation.gain * 1.22756f * gain;
+    float totalGain = 1.22756f * mSaturation.gain * gain;
 
     if (!reset && mSmoothingCounter < 0) {
         mVolume[0] = mTargetVolume[0];
@@ -258,30 +249,32 @@ void /* FUN_0045e890 */ Amp::updateSmoothing() {
 }
 
 void /* FUN_0045e89c */ Amp::setSaturation(int saturationIndex) {
-    if (saturationIndex < -1) {
+    if (saturationIndex < 0) {
         saturationIndex = -1;
-    } else if (saturationIndex > 63) {
-        saturationIndex = 63;
+    } else {
+        saturationIndex = saturationIndex * 4 + 1;
+        if (saturationIndex > 63) {
+            saturationIndex = 63;
+        }
     }
 
     mSaturation.level = saturationIndex;
 
     float x = ampSaturationTable[0][mSaturation.level + 1][0];
     float gain = ampSaturationTable[0][mSaturation.level + 1][1];
-    float c = (float) (3.0 * sqrt(2) / 4.0);
 
-    mSaturation.threshold = sqrt(2) / x;
-    mSaturation.parameterA = -(x * x * x * c) / 6.0f;
-    mSaturation.parameterB = x * c;
+    mSaturation.threshold = mField_34 / x;
+    mSaturation.parameterA = -(x * x * x * mField_38 * mField_3c);
+    mSaturation.parameterB = x * mField_38;
     mSaturation.gain = gain;
 }
 
 void /* FUN_0045e8ec */ Amp::process(float *channels, float sample) {
     if (mSaturation.level > -1) {
         if (fabsf(sample) >= mSaturation.threshold) {
-            sample = (sample > 0) ? 1 : -1;
+            sample = mField_2c[(sample > 0) ? 0 : 1];
         } else {
-            sample = mSaturation.parameterB * sample + mSaturation.parameterA * sample * sample * sample;
+            sample = (sample * sample * mSaturation.parameterA + mSaturation.parameterB) * sample;
         }
     }
 

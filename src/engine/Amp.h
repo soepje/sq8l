@@ -17,11 +17,10 @@ private:
     float /* field_c */ mVolumeIncrement[2];
     int /* field_14 */ mSmoothingCounter;
     Saturation /* field_18 */ mSaturation;
-    float /* field_2c */ mField_2c;
-    float /* field_30 */ mField_30;
-    float /* field_34 */ mField_34;
-    float /* field_38 */ mField_38;
-    float /* field_3c */ mField_3c;
+    float /* field_2c */ mField_2c[2] = { 1.0, -1.0 };
+    float /* field_34 */ mField_34 = 1.4142135381698608;
+    float /* field_38 */ mField_38 = 1.0606601238250732;
+    float /* field_3c */ mField_3c = 0.1666666716337204;
     float /* field_40 */ mTargetVolume[2];
     int /* field_48 */ mSmoothingSamples;
     float /* field_4c */ mSmoothingSamplesInverse;
@@ -37,7 +36,6 @@ private:
 
 public:
     Amp();
-    void init();
     void copyState(Amp *other);
     void setParameters(unsigned int volume, int panning, bool reset);
     void setParameters(unsigned int volume, int panning, bool reset, float gain);
