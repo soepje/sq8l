@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 
 files = [
-    ('images/lcd.gif', 'lcdImageMap'),
-    ('images/lcdButtons.gif', 'lcdButtons'),
-    ('images/background.jpg', 'backgroundImage'),
-    ('images/buttons.gif', 'buttons'),
-    ('images/programbank.bin', 'programBank'),
-    ('images/toggleButton.gif', 'toggleButton'),
-    ('images/toggleButtonLed.gif', 'toggleButtonLed'),
-    ('res/waverom.bin', 'waverom'),
+    ('res/images/lcd.gif', 'lcdImageMap'),
+    ('res/images/lcdButtons.gif', 'lcdButtons'),
+    ('res/images/background.jpg', 'backgroundImage'),
+    ('res/images/buttons.gif', 'buttons'),
+    ('res/rom/programbank.bin', 'programBank'),
+    ('res/images/toggleButton.gif', 'toggleButton'),
+    ('res/images/toggleButtonLed.gif', 'toggleButtonLed'),
+    ('res/rom/waverom.bin', 'waverom'),
 ]
 
 with open('src/data/Data.h', 'w') as f:
