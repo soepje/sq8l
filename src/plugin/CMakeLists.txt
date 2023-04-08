@@ -1,4 +1,4 @@
-juce_set_vst2_sdk_path(../../lib/vstsdk2.4)
+juce_set_vst2_sdk_path(../../third_party/vstsdk2.4)
 
 juce_add_plugin(AudioPluginExample
         # VERSION ...                               # Set this if the plugin version is different to the project version
