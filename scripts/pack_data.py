@@ -9,6 +9,7 @@ files = [
     ('res/images/toggleButton.gif', 'toggleButton'),
     ('res/images/toggleButtonLed.gif', 'toggleButtonLed'),
     ('res/rom/waverom.bin', 'waverom'),
+    ('res/rom/presets.zip', 'presets'),
 ]
 
 with open('src/data/Data.h', 'w') as f:

@@ -23,6 +23,8 @@ extern uint8_t toggleButtonLed[1138];
 extern size_t toggleButtonLedSize;
 extern uint8_t waverom[262144];
 extern size_t waveromSize;
+extern uint8_t presets[138400];
+extern size_t presetsSize;
 
 }
 }
