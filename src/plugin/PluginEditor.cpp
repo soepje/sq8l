@@ -37,7 +37,7 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAud
     midiKeyboard.setBounds(0, getHeight() - 100, getWidth(), 100);
 
     addAndMakeVisible(&programMenu);
-    programMenu.setBounds(165, 45, 100, 20);
+    programMenu.setBounds(20, 20, 100, 20);
     for (size_t i = 0; i < processorRef.getNumPrograms(); i++) {
         programMenu.addItem(processorRef.getProgramName(i), i + 1);
     }
@@ -205,8 +205,9 @@ void AudioPluginAudioProcessorEditor::paint (juce::Graphics& g) {
 
     auto backgroundImage = juce::ImageCache::getFromMemory(sq8l::data::backgroundImage, (int) sq8l::data::backgroundImageSize);
 
-    g.drawImage(backgroundImage, 0, 0, backgroundImage.getWidth(), backgroundImage.getHeight(), 0, 0, backgroundImage.getWidth(), backgroundImage.getHeight(),
-                false);
+    g.drawImage(backgroundImage, 0, 89, backgroundImage.getWidth(), backgroundImage.getHeight() - 89, 0, 89, backgroundImage.getWidth(), backgroundImage.getHeight() - 89, false);
+    g.drawImage(backgroundImage, 0, 79, backgroundImage.getWidth(), 12, 0, 22, backgroundImage.getWidth(), 12, false);
+    g.drawImage(backgroundImage, 0, 58, backgroundImage.getWidth(), 21, 0, 409, backgroundImage.getWidth(), 21, false);
 }
 
 void AudioPluginAudioProcessorEditor::showPageGroup(int i) {
