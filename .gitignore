@@ -2,3 +2,5 @@ cmake-build-debug
 .idea/
 third_party/vstsdk2.4
 build/
+.vscode/
+
