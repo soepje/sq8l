@@ -14,6 +14,11 @@ public:
     juce::AudioProcessorValueTreeState parameters;
     ProgramManager programManager;
 
+    ProgramManager& getProgramManager() {
+        return programManager;
+    }
+
+
     //==============================================================================
     AudioPluginAudioProcessor();
     ~AudioPluginAudioProcessor() override;

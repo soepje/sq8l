@@ -3,12 +3,12 @@
 #include "LcdScreen.h"
 #include "LookAndFeel.h"
 #include "ParameterHelper.h"
-
+#include "PresetPanel.h"
 
 //==============================================================================
 AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAudioProcessor& p)
     : AudioProcessorEditor (&p), processorRef (p), midiKeyboard(p.midiKeyboardState, juce::MidiKeyboardComponent::horizontalKeyboard),
-      lcdScreen(ParameterHelper::createPageLayout())
+      lcdScreen(ParameterHelper::createPageLayout()), presetPanel(p.getProgramManager())
 {
     juce::ignoreUnused (processorRef);
 
@@ -189,9 +189,20 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAud
         matButtons.add(std::move(matButton));
     }
 
+    addAndMakeVisible(presetPanel);
+    presetPanel.setVisible(false);
+    presetPanel.setBounds(0, 58, getWidth(), getHeight() - 158);
+
+    addAndMakeVisible(presetPanelButton);
+    presetPanelButton.setBounds(140, 20, 60, 20);
+    presetPanelButton.setButtonText("Browser");
+    presetPanelButton.setClickingTogglesState(true);
+    presetPanelButton.onClick = [this] {
+        bool visible = presetPanelButton.getToggleState();
+        presetPanel.setVisible(visible);
+    };
+    
     updateLcdButtons();
-
-
 }
 
 AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor() {

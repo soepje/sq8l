@@ -7,6 +7,7 @@
 #include "LcdButton.h"
 #include "LcdScreen.h"
 #include "LookAndFeel.h"
+#include "PresetPanel.h"
 
 //==============================================================================
 class AudioPluginAudioProcessorEditor  : public juce::AudioProcessorEditor
@@ -29,6 +30,9 @@ private:
     LcdButton lcdButtonUp;
     LcdButton lcdButtonDown;
     LcdScreen lcdScreen;
+
+    PresetPanel presetPanel;
+    juce::TextButton presetPanelButton;
 
     juce::ImageButton mixButton;
     juce::ImageButton osc1Button;
