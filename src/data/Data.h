@@ -15,15 +15,15 @@ extern uint8_t backgroundImage[182933];
 extern size_t backgroundImageSize;
 extern uint8_t buttons[4620];
 extern size_t buttonsSize;
-extern uint8_t programBank[8166];
-extern size_t programBankSize;
 extern uint8_t toggleButton[1673];
 extern size_t toggleButtonSize;
 extern uint8_t toggleButtonLed[1138];
 extern size_t toggleButtonLedSize;
+extern uint8_t sq8l[905];
+extern size_t sq8lSize;
 extern uint8_t waverom[262144];
 extern size_t waveromSize;
-extern uint8_t presets[138400];
+extern uint8_t presets[23756];
 extern size_t presetsSize;
 
 }

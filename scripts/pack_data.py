@@ -5,9 +5,9 @@ files = [
     ('res/images/lcdButtons.gif', 'lcdButtons'),
     ('res/images/background.jpg', 'backgroundImage'),
     ('res/images/buttons.gif', 'buttons'),
-    ('res/rom/programbank.bin', 'programBank'),
     ('res/images/toggleButton.gif', 'toggleButton'),
     ('res/images/toggleButtonLed.gif', 'toggleButtonLed'),
+    ('res/images/sq8l.png', 'sq8l'),
     ('res/rom/waverom.bin', 'waverom'),
     ('res/rom/presets.zip', 'presets'),
 ]

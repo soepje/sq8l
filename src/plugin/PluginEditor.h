@@ -7,10 +7,9 @@
 #include "LcdButton.h"
 #include "LcdScreen.h"
 #include "LookAndFeel.h"
-#include "PresetPanel.h"
 
 //==============================================================================
-class AudioPluginAudioProcessorEditor  : public juce::AudioProcessorEditor
+class AudioPluginAudioProcessorEditor  : public juce::AudioProcessorEditor, public ProgramManager::Listener
 {
 public:
     explicit AudioPluginAudioProcessorEditor (AudioPluginAudioProcessor&);
@@ -25,14 +24,12 @@ private:
     AudioPluginAudioProcessor& processorRef;
 
     juce::MidiKeyboardComponent midiKeyboard;
-    juce::ComboBox programMenu;
 
     LcdButton lcdButtonUp;
     LcdButton lcdButtonDown;
     LcdScreen lcdScreen;
 
-    PresetPanel presetPanel;
-    juce::TextButton presetPanelButton;
+    juce::ImageComponent logo;
 
     juce::ImageButton mixButton;
     juce::ImageButton osc1Button;
@@ -57,8 +54,19 @@ private:
 
     LookAndFeel lookAndFeel;
 
+    juce::TextButton presetNameButton;
+    juce::TextButton presetButton;
+    juce::PopupMenu presetMenu;
+    juce::TextButton prevPresetButton;
+    juce::TextButton nextPresetButton;
+
     void showPageGroup(int i);
     void updateLcdButtons();
+
+    void onPresetLoad(ProgramManager* pm) override;
+    void populatePresetMenu();
+    void pupulateSubMenu(juce::PopupMenu& menu, juce::String directory, std::vector<juce::String> presets);
+    void setPresetName();
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (AudioPluginAudioProcessorEditor)
 };

@@ -24,6 +24,7 @@ target_sources(AudioPluginExample
         LcdScreen.cpp
         LcdButton.cpp
         ProgramManager.cpp
+        Preset.cpp
         PluginEditor.cpp
         ParameterHelper.cpp
         LookAndFeel.cpp

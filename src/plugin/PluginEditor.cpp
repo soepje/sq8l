@@ -3,12 +3,11 @@
 #include "LcdScreen.h"
 #include "LookAndFeel.h"
 #include "ParameterHelper.h"
-#include "PresetPanel.h"
 
 //==============================================================================
-AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAudioProcessor& p)
+AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor    (AudioPluginAudioProcessor& p)
     : AudioProcessorEditor (&p), processorRef (p), midiKeyboard(p.midiKeyboardState, juce::MidiKeyboardComponent::horizontalKeyboard),
-      lcdScreen(ParameterHelper::createPageLayout()), presetPanel(p.getProgramManager())
+      lcdScreen(ParameterHelper::createPageLayout())
 {
     juce::ignoreUnused (processorRef);
 
@@ -25,6 +24,7 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAud
         }
     }
 
+    processorRef.getProgramManager().addListener(this);
 
 
     setLookAndFeel(&lookAndFeel);
@@ -36,16 +36,39 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAud
 
     midiKeyboard.setBounds(0, getHeight() - 100, getWidth(), 100);
 
-    addAndMakeVisible(&programMenu);
-    programMenu.setBounds(20, 20, 100, 20);
-    for (size_t i = 0; i < processorRef.getNumPrograms(); i++) {
-        programMenu.addItem(processorRef.getProgramName(i), i + 1);
-    }
-    programMenu.setSelectedId (1);
-    programMenu.onChange = [this]() {
-        int id = programMenu.getSelectedId();
-        processorRef.setCurrentProgram(id - 1);
+    addAndMakeVisible(&presetNameButton);
+    presetNameButton.setBounds(140, 15, 150, 30);
+    setPresetName();
+
+    addAndMakeVisible(prevPresetButton);
+    prevPresetButton.setBounds(300, 15, 20, 30);
+    prevPresetButton.setButtonText("<");
+    prevPresetButton.onClick = [this] {
+        this->processorRef.getProgramManager().loadPreviousPreset();
     };
+
+    addAndMakeVisible(nextPresetButton);
+    nextPresetButton.setBounds(325, 15, 20, 30);
+    nextPresetButton.setButtonText(">");
+    nextPresetButton.onClick = [this] {
+        this->processorRef.getProgramManager().loadNextPreset();
+    };
+
+    addAndMakeVisible(presetButton);
+    presetButton.setButtonText("Menu");
+    presetButton.setBounds(350, 15, 60, 30);
+    presetButton.onClick = [this] {
+        presetMenu.showMenu (juce::PopupMenu::Options().withMinimumWidth (100)
+                                   .withMaximumNumColumns (3)
+                                   .withTargetComponent (presetButton));
+    };
+    
+    populatePresetMenu();
+
+    auto logoImage = juce::ImageCache::getFromMemory(sq8l::data::sq8l, (int) sq8l::data::sq8lSize);
+    logo.setImage(logoImage);
+    logo.setBounds(0, 18, 120, 30);
+    addAndMakeVisible(&logo);
 
     addAndMakeVisible(lcdScreen);
     lcdScreen.setBounds(38, 252, 550, 50);
@@ -60,7 +83,7 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAud
         this->lcdScreen.repaint();
         updateLcdButtons();
     };
-
+    
     addAndMakeVisible(lcdButtonDown);
     lcdButtonUp.setName("lcdButtonDown");
     lcdButtonDown.setBounds(570, 270, 20, 18);
@@ -189,21 +212,63 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor (AudioPluginAud
         matButtons.add(std::move(matButton));
     }
 
-    addAndMakeVisible(presetPanel);
-    presetPanel.setVisible(false);
-    presetPanel.setBounds(0, 58, getWidth(), getHeight() - 158);
-
-    addAndMakeVisible(presetPanelButton);
-    presetPanelButton.setBounds(140, 20, 60, 20);
-    presetPanelButton.setButtonText("Browser");
-    presetPanelButton.setClickingTogglesState(true);
-    presetPanelButton.onClick = [this] {
-        bool visible = presetPanelButton.getToggleState();
-        presetPanel.setVisible(visible);
-    };
     
     updateLcdButtons();
 }
+
+void AudioPluginAudioProcessorEditor::populatePresetMenu() {
+
+    auto presets = processorRef.programManager.getPresets();
+
+
+    pupulateSubMenu(presetMenu, "", presets);
+
+
+    // presetMenu.addSu
+
+    // presetMenu.addItem("init", [this] {  });
+
+}
+
+void AudioPluginAudioProcessorEditor::pupulateSubMenu(juce::PopupMenu& menu, juce::String directory, std::vector<juce::String> presets) {
+
+    std::vector<juce::String> subdirectories;
+    std::vector<juce::String> directoryPresets;
+
+    for (auto p : presets) {
+        if (p.startsWith(directory)) {
+            auto rest = p.substring(directory.length());
+
+            if (rest.contains("/")) {
+                auto subdir = (directory.length() > 0 ? directory + "/" : "") + rest.substring(0, rest.indexOf("/"));
+
+
+
+                if (std::find(subdirectories.begin(), subdirectories.end(), subdir) == subdirectories.end()) {
+                    subdirectories.push_back(subdir);
+                }
+            } else {
+                directoryPresets.push_back(p);
+            }
+        }
+    }
+
+    if (!subdirectories.empty()) {
+        for (auto s : subdirectories) {
+            juce::PopupMenu m;
+            pupulateSubMenu(m, s + "/", presets);
+            menu.addSubMenu(s, m, true);
+        }
+    } else {
+        for (auto p : directoryPresets) {
+            menu.addItem(p.substring(p.lastIndexOf("/") + 1), [this, p] {
+                processorRef.getProgramManager().loadPreset(p);
+            });
+        }
+    }
+    
+}
+
 
 AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor() {
     setLookAndFeel(nullptr);
@@ -234,4 +299,15 @@ void AudioPluginAudioProcessorEditor::showPageGroup(int i) {
 void AudioPluginAudioProcessorEditor::updateLcdButtons() {
     lcdButtonUp.setOn(!lcdScreen.getPageGroup()->isFirstPage());
     lcdButtonDown.setOn(!lcdScreen.getPageGroup()->isLastPage());
+}
+
+void AudioPluginAudioProcessorEditor::onPresetLoad(ProgramManager* pm) {
+    setPresetName();
+}
+
+void AudioPluginAudioProcessorEditor::setPresetName() {
+    auto preset = processorRef.getProgramManager().getPresetName();
+    auto presetName = preset.substring(preset.lastIndexOf("/")+1);
+
+    presetNameButton.setButtonText(presetName);
 }

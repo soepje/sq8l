@@ -43,19 +43,19 @@ double AudioPluginAudioProcessor::getTailLengthSeconds() const
 }
 
 int AudioPluginAudioProcessor::getNumPrograms() {
-    return programManager.getNumPrograms();
+    return 1;
 }
 
 int AudioPluginAudioProcessor::getCurrentProgram() {
-    return programManager.getCurrentProgram();
+    return 0;
 }
 
 void AudioPluginAudioProcessor::setCurrentProgram (int index) {
-    programManager.setCurrentProgram(index);
+
 }
 
 const juce::String AudioPluginAudioProcessor::getProgramName (int index) {
-    return programManager.getProgramName(index);
+    return "";
 }
 
 void AudioPluginAudioProcessor::changeProgramName (int index, const juce::String& newName) {
@@ -149,8 +149,10 @@ void AudioPluginAudioProcessor::setStateInformation (const void* data, int sizeI
     std::unique_ptr<juce::XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
 
     if (xmlState != nullptr)
-        if (xmlState->hasTagName (parameters.state.getType()))
+        if (xmlState->hasTagName (parameters.state.getType())) {
             parameters.replaceState (juce::ValueTree::fromXml (*xmlState));
+            programManager.init();
+        }
 }
 
 //==============================================================================
